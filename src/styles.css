@@ -210,3 +210,8 @@
 .muscle:hover {
   fill-opacity: 1;
 }
+
+/* Hide the Lovable platform badge in deployments where it is injected in the page DOM. */
+#lovable-badge {
+  display: none !important;
+}
