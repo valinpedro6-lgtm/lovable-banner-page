@@ -43,6 +43,10 @@ export interface Profile {
   experience: Experience;
   weeklyFrequency: number;
   split: string;
+  /** JavaScript weekday numbers: Sunday = 0, Monday = 1, ... */
+  trainingDays?: number[];
+  /** Local YYYY-MM-DD for the first active day of the current training cycle. */
+  trainingScheduleStart?: string | null;
 }
 
 export interface NotificationPrefs {

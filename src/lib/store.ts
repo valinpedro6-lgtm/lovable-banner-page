@@ -21,8 +21,10 @@ export const DEFAULT_STATE: AppState = {
     weight: null,
     height: null,
     experience: "intermediario",
-    weeklyFrequency: 4,
+    weeklyFrequency: 3,
     split: "ppl",
+    trainingDays: [1, 3, 5],
+    trainingScheduleStart: null,
   },
   notifications: {
     reminder: false,

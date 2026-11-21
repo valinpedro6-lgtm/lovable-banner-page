@@ -11,8 +11,10 @@ import { useEngine } from "@/hooks/use-engine";
 import { relTime } from "@/lib/format";
 import { MUSCLES, type MuscleId } from "@/lib/muscles";
 import { BAND_COLOR } from "@/lib/recovery";
+import { dayMuscles, planKey, programFor } from "@/lib/programs";
 import { sampleWorkouts } from "@/lib/sample";
 import { actions } from "@/lib/store";
+import { nextScheduledWorkout, scheduleAnchorDate } from "@/lib/training-schedule";
 import { workoutSets, workoutTitle } from "@/lib/workout-utils";
 
 export const Route = createFileRoute("/")({
@@ -54,6 +56,26 @@ function Dashboard() {
     day: "numeric",
     month: "short",
   });
+  const scheduledProgram = programFor(app.profile.split);
+  const scheduledWorkout =
+    scheduledProgram.id === "livre"
+      ? undefined
+      : nextScheduledWorkout(
+          scheduledProgram,
+          app.profile.trainingDays,
+          app.profile.trainingScheduleStart ?? scheduleAnchorDate(app.profile.trainingDays, new Date(now)),
+          app.workouts,
+          now,
+        );
+  const scheduledDateLabel = scheduledWorkout
+    ? scheduledWorkout.daysAway === 0
+      ? "Hoje"
+      : scheduledWorkout.date.toLocaleDateString("pt-BR", {
+          weekday: "long",
+          day: "numeric",
+          month: "short",
+        })
+    : "";
 
   return (
     <div className="space-y-5">
@@ -111,31 +133,69 @@ function Dashboard() {
       {/* Next workout */}
       <section className="panel relative overflow-hidden p-5 animate-rise">
         <SectionTitle>Próximo treino</SectionTitle>
-        <div className="flex items-start gap-4">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-lime-gradient text-primary-foreground glow">
-            {recommendation.kind === "train" ? <Zap className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="font-display text-lg font-semibold">{recommendation.title}</div>
-            <p className="mt-1 text-sm text-muted-foreground">{recommendation.reason}</p>
-            {recommendation.muscles.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {recommendation.muscles.map((m) => (
-                  <span
-                    key={m}
-                    className="rounded-full border border-primary/50 bg-accent px-3 py-1 text-xs text-accent-foreground"
-                  >
-                    {MUSCLES[m].name}
-                  </span>
-                ))}
+        {scheduledWorkout ? (
+          <>
+            <div className="flex items-start gap-4">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-lime-gradient text-primary-foreground glow">
+                <Zap className="h-6 w-6" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-display text-lg font-semibold">{scheduledWorkout.day.name}</div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {scheduledDateLabel} · {scheduledProgram.name}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {scheduledWorkout.daysAway === 0 && recommendation.kind === "rest"
+                    ? "Sua agenda prevê este treino, mas a recuperação sugere pegar leve hoje."
+                    : "Definido pela sua agenda semanal."}
+                </p>
               </div>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {dayMuscles(scheduledWorkout.day).map((m) => (
+                <span
+                  key={m}
+                  className="rounded-full border border-primary/50 bg-accent px-3 py-1 text-xs text-accent-foreground"
+                >
+                  {MUSCLES[m].name}
+                </span>
+              ))}
+            </div>
+            <Button asChild variant="lime" size="pill" className="mt-4 w-full">
+              <Link to="/registrar" search={{ plano: planKey(scheduledProgram, scheduledWorkout.day) }}>
+                Registrar este treino
+              </Link>
+            </Button>
+          </>
+        ) : (
+          <>
+            <div className="flex items-start gap-4">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-lime-gradient text-primary-foreground glow">
+                {recommendation.kind === "train" ? <Zap className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-display text-lg font-semibold">{recommendation.title}</div>
+                <p className="mt-1 text-sm text-muted-foreground">{recommendation.reason}</p>
+                {recommendation.muscles.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {recommendation.muscles.map((m) => (
+                      <span
+                        key={m}
+                        className="rounded-full border border-primary/50 bg-accent px-3 py-1 text-xs text-accent-foreground"
+                      >
+                        {MUSCLES[m].name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            {recommendation.kind === "train" && (
+              <Button asChild variant="lime" size="pill" className="mt-4 w-full">
+                <Link to="/registrar">Registrar este treino</Link>
+              </Button>
             )}
-          </div>
-        </div>
-        {recommendation.kind === "train" && (
-          <Button asChild variant="lime" size="pill" className="mt-4 w-full">
-            <Link to="/registrar">Registrar este treino</Link>
-          </Button>
+          </>
         )}
       </section>
 

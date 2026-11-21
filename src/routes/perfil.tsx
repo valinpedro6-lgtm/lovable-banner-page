@@ -20,6 +20,7 @@ import { sampleWorkouts } from "@/lib/sample";
 import { actions, DEFAULT_STATE, useAppState, type AppState } from "@/lib/store";
 import type { Experience, NotificationPrefs } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { scheduleAnchorDate, suggestedTrainingDays } from "@/lib/training-schedule";
 
 const DESC = "Seus dados, nível de experiência e preferências ajustam a estimativa de recuperação.";
 
@@ -61,6 +62,7 @@ function ProfilePage() {
     .map((s) => s[0]?.toUpperCase())
     .join("");
   const bmi = p.weight && p.height ? p.weight / Math.pow(p.height / 100, 2) : null;
+  const scheduleFrequency = p.trainingDays?.length ?? p.weeklyFrequency;
 
   const exportData = () => {
     const blob = new Blob([JSON.stringify(app, null, 2)], { type: "application/json" });
@@ -155,10 +157,16 @@ function ProfilePage() {
             {[1, 2, 3, 4, 5, 6, 7].map((n) => (
               <button
                 key={n}
-                onClick={() => actions.updateProfile({ weeklyFrequency: n })}
+                onClick={() =>
+                  actions.updateProfile({
+                    weeklyFrequency: n,
+                    trainingDays: suggestedTrainingDays(n),
+                    trainingScheduleStart: scheduleAnchorDate(suggestedTrainingDays(n), new Date()),
+                  })
+                }
                 className={cn(
                   "num h-11 rounded-xl border text-sm font-semibold transition-colors",
-                  p.weeklyFrequency === n
+                  scheduleFrequency === n
                     ? "border-primary bg-accent text-accent-foreground"
                     : "border-border text-muted-foreground",
                 )}
@@ -167,6 +175,9 @@ function ProfilePage() {
               </button>
             ))}
           </div>
+          <p className="mt-2 text-[11px] text-muted-foreground">
+            Ao mudar a frequência, o app sugere dias. Personalize os dias na página Treinos.
+          </p>
         </div>
         <div>
           <Label>Divisão</Label>
@@ -174,7 +185,12 @@ function ProfilePage() {
             {SPLITS.map((s) => (
               <button
                 key={s}
-                onClick={() => actions.updateProfile({ split: s })}
+                onClick={() =>
+                  actions.updateProfile({
+                    split: s,
+                    trainingScheduleStart: scheduleAnchorDate(p.trainingDays, new Date()),
+                  })
+                }
                 className={cn(
                   "h-9 rounded-full border px-4 text-sm transition-colors",
                   p.split === s ? "border-primary bg-accent text-accent-foreground" : "border-border text-muted-foreground",

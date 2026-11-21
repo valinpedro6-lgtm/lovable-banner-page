@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, ChevronDown, Dumbbell, Moon, Repeat, Zap } from "lucide-react";
+import { CalendarDays, Check, ChevronDown, Dumbbell, Moon, Repeat, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Disclaimer, PageHeader, SectionTitle } from "@/components/PageHeader";
 import { RecoveryRing } from "@/components/RecoveryRing";
@@ -19,6 +19,14 @@ import {
 } from "@/lib/programs";
 import { BAND_COLOR, bandFor } from "@/lib/recovery";
 import { actions } from "@/lib/store";
+import {
+  dateInWeek,
+  localDateKey,
+  normalizeTrainingDays,
+  scheduleAnchorDate,
+  scheduledProgramDay,
+  WEEKDAYS,
+} from "@/lib/training-schedule";
 import type { Experience } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +54,12 @@ function PlansPage() {
   const best = bestDay(ranked);
   const exp = app.profile.experience;
   const restDay = recommendation.kind === "rest" && recommendation.title === "Descanso ativo";
+  const trainingDays = normalizeTrainingDays(app.profile.trainingDays);
+  const scheduleStart = app.profile.trainingScheduleStart || scheduleAnchorDate(trainingDays, new Date(now));
+  const currentDate = new Date(now);
+  const calendarReference = scheduleStart > localDateKey(currentDate)
+    ? new Date(`${scheduleStart}T00:00:00`)
+    : currentDate;
 
   return (
     <div className="space-y-5">
@@ -73,13 +87,105 @@ function PlansPage() {
             <ProgramPicker
               value={program.id}
               onChange={(id) => {
-                actions.updateProfile({ split: id });
+                actions.updateProfile({ split: id, trainingScheduleStart: scheduleAnchorDate(trainingDays, new Date(now)) });
                 setChoosing(false);
               }}
             />
           </div>
         )}
       </section>
+
+      {program.id === "livre" ? (
+        <section className="panel flex items-start gap-3 p-4 animate-rise">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2 text-primary">
+            <CalendarDays className="h-5 w-5" />
+          </span>
+          <div>
+            <div className="text-sm font-medium">Agenda semanal</div>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Na divisão Livre, o app escolhe o treino pela sua recuperação. Escolha uma divisão fixa para organizar os dias da semana.
+            </p>
+          </div>
+        </section>
+      ) : (
+        <section className="panel p-4 animate-rise">
+          <div className="flex items-start gap-3">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2 text-primary">
+              <CalendarDays className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="text-sm font-medium">Agenda semanal</div>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Marque seus dias. O primeiro dia marcado recebe a primeira sessão da divisão; depois a sequência continua automaticamente.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-4 gap-2">
+            {WEEKDAYS.map((weekday) => {
+              const selected = trainingDays.includes(weekday.value);
+              return (
+                <button
+                  key={weekday.value}
+                  type="button"
+                  aria-label={`Treinar ${weekday.label}`}
+                  aria-pressed={selected}
+                  disabled={selected && trainingDays.length === 1}
+                  onClick={() => {
+                    const next = normalizeTrainingDays(
+                      selected
+                        ? trainingDays.filter((day) => day !== weekday.value)
+                        : [...trainingDays, weekday.value],
+                    );
+                    if (next.length === 0) return;
+                    actions.updateProfile({
+                      trainingDays: next,
+                      weeklyFrequency: next.length,
+                      trainingScheduleStart: scheduleAnchorDate(next, new Date(now)),
+                    });
+                  }}
+                  className={cn(
+                    "flex h-11 items-center justify-center gap-1 rounded-xl border text-xs font-medium transition-colors disabled:cursor-not-allowed",
+                    selected
+                      ? "border-primary bg-accent text-accent-foreground"
+                      : "border-border text-muted-foreground hover:border-muted-foreground",
+                  )}
+                >
+                  {selected && <Check className="h-3.5 w-3.5" />}
+                  {weekday.short}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {WEEKDAYS.map((weekday) => {
+              const date = dateInWeek(calendarReference, weekday.value);
+              const day = scheduledProgramDay(program, trainingDays, scheduleStart, date);
+              return (
+                <div
+                  key={weekday.value}
+                  className={cn(
+                    "min-w-0 rounded-xl border px-3 py-2.5",
+                    day ? "border-primary/30 bg-accent/30" : "border-border/60 bg-surface/40",
+                  )}
+                >
+                  <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {weekday.label}
+                  </div>
+                  <div className={cn("mt-1 truncate text-xs", day ? "text-foreground" : "text-muted-foreground")}>
+                    {day?.name ?? "Descanso"}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
+            Se a divisão tiver mais sessões que dias marcados, o ciclo continua na semana seguinte.
+          </p>
+        </section>
+      )}
 
       {/* Recommended */}
       {best && (
