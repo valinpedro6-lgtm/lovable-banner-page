@@ -1,7 +1,7 @@
 import { EXERCISES, type Exercise } from "./exercises";
 import type { MuscleId } from "./muscles";
 import type { MuscleState } from "./recovery";
-import type { Experience, Workout, WorkoutEntry } from "./types";
+import type { CardioActivity, Experience, Workout, WorkoutEntry } from "./types";
 
 type Item = [name: string, sets: number, reps: number];
 
@@ -9,6 +9,13 @@ export interface PlanDay {
   id: string;
   name: string;
   items: Item[];
+  cardio?: CardioPrescription;
+}
+
+export interface CardioPrescription {
+  activity: CardioActivity;
+  minutes: number;
+  focus: string;
 }
 
 export interface Program {
@@ -234,6 +241,57 @@ export const PROGRAMS: Program[] = [
       { id: "emp", name: "Empurrar", items: [["Flexão de braço", 4, 12], ["Paralelas com inclinação à frente", 3, 10], ["Pike push-up", 3, 10], ["Mergulho no banco", 3, 12], ["Flexão diamante", 2, 10]] },
       { id: "pux", name: "Puxar", items: [["Barra fixa pronada", 4, 6], ["Barra fixa supinada (chin-up)", 3, 8], ["Remada invertida (australiana)", 3, 12], ["Elevação de pernas na barra fixa", 3, 10]] },
       { id: "per", name: "Pernas e core", items: [["Agachamento búlgaro", 3, 10], ["Afundo reverso", 3, 12], ["Ponte unilateral", 3, 12], ["Panturrilha no degrau", 4, 15], ["Abdominal bicicleta", 3, 20]] },
+    ],
+  },
+  {
+    id: "hibrido",
+    name: "Treino híbrido",
+    freq: "4x por semana",
+    level: "Todos",
+    description:
+      "Força e cardio combinados em uma divisão equilibrada para condicionamento completo.",
+    days: [
+      {
+        id: "superior-a",
+        name: "Superior A + bike",
+        items: [
+          ...CHEST.slice(0, 2),
+          ...BACK.slice(0, 2),
+          ...SHOULDERS.slice(0, 1),
+          ...TRICEPS.slice(0, 1),
+        ],
+        cardio: { activity: "Bicicleta", minutes: 20, focus: "Ritmo contínuo moderado · zona 2" },
+      },
+      {
+        id: "inferior-a",
+        name: "Inferior A + intervalos",
+        items: [...QUADS, ...HAMS.slice(0, 1), ...GLUTES, ...CALVES],
+        cardio: { activity: "Corrida", minutes: 15, focus: "Intervalos: 1 min forte / 1 min leve" },
+      },
+      {
+        id: "superior-b",
+        name: "Superior B + elíptico",
+        items: [
+          ...CHEST_B.slice(0, 1),
+          ...BACK_B.slice(0, 2),
+          ...SHOULDERS.slice(1),
+          ...BICEPS,
+          ...TRICEPS.slice(1),
+        ],
+        cardio: { activity: "Elíptico", minutes: 25, focus: "Ritmo contínuo confortável" },
+      },
+      {
+        id: "inferior-b",
+        name: "Inferior B + escada",
+        items: [
+          ["Agachamento búlgaro", 3, 10],
+          ["Leg press 45°", 3, 12],
+          ...HAMS.slice(1),
+          ...GLUTES,
+          ...CALVES,
+        ],
+        cardio: { activity: "Escada", minutes: 15, focus: "Ritmo constante · esforço moderado" },
+      },
     ],
   },
   {

@@ -1,7 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, Check, ChevronDown, Dumbbell, Moon, Repeat, Zap } from "lucide-react";
+import {
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Dumbbell,
+  HeartPulse,
+  Moon,
+  Repeat,
+  Zap,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { Disclaimer, PageHeader, SectionTitle } from "@/components/PageHeader";
+import { CardioTimer } from "@/components/CardioTimer";
 import { RecoveryRing } from "@/components/RecoveryRing";
 import { Button } from "@/components/ui/button";
 import { useEngine } from "@/hooks/use-engine";
@@ -14,6 +24,7 @@ import {
   PROGRAMS,
   programFor,
   rankDays,
+  type CardioPrescription,
   type Program,
   type RankedDay,
 } from "@/lib/programs";
@@ -50,6 +61,10 @@ function PlansPage() {
   const { app, states, workouts, now, recommendation } = useEngine();
   const program = programFor(app.profile.split);
   const [choosing, setChoosing] = useState(false);
+  const [timerPreset, setTimerPreset] = useState<
+    (CardioPrescription & { nonce: number }) | undefined
+  >();
+  const [timerPresetNonce, setTimerPresetNonce] = useState(0);
   const ranked = useMemo(() => rankDays(program, states, workouts, now), [program, states, workouts, now]);
   const best = bestDay(ranked);
   const exp = app.profile.experience;
@@ -60,6 +75,18 @@ function PlansPage() {
   const calendarReference = scheduleStart > localDateKey(currentDate)
     ? new Date(`${scheduleStart}T00:00:00`)
     : currentDate;
+  const useCardioPreset = (cardio: CardioPrescription) => {
+    const nonce = timerPresetNonce + 1;
+    setTimerPresetNonce(nonce);
+    setTimerPreset({ ...cardio, nonce });
+    window.setTimeout(
+      () =>
+        document
+          .getElementById("cardio-timer")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      50,
+    );
+  };
 
   return (
     <div className="space-y-5">
@@ -187,6 +214,8 @@ function PlansPage() {
         </section>
       )}
 
+      <CardioTimer key={timerPreset?.nonce ?? 0} preset={timerPreset} />
+
       {/* Recommended */}
       {best && (
         <section className="panel relative overflow-hidden p-5 animate-rise">
@@ -208,6 +237,9 @@ function PlansPage() {
           </div>
           <MuscleChips day={best} />
           <ExerciseList day={best} exp={exp} />
+          {best.day.cardio && (
+            <CardioRecommendation cardio={best.day.cardio} onUse={useCardioPreset} />
+          )}
           <Button asChild variant="lime" size="xl" className="mt-4 w-full">
             <Link to="/registrar" search={{ plano: planKey(program, best.day) }}>
               <Dumbbell className="h-5 w-5" /> Pegar este treino
@@ -221,7 +253,14 @@ function PlansPage() {
         <SectionTitle>Todos os treinos de {program.name}</SectionTitle>
         <ul className="space-y-3">
           {ranked.map((r) => (
-            <DayCard key={r.day.id} r={r} program={program} exp={exp} best={r.day.id === best?.day.id} />
+            <DayCard
+              key={r.day.id}
+              r={r}
+              program={program}
+              exp={exp}
+              best={r.day.id === best?.day.id}
+              onUseCardio={useCardioPreset}
+            />
           ))}
         </ul>
       </section>
@@ -291,7 +330,19 @@ function ExerciseList({ day, exp }: { day: RankedDay; exp: Experience }) {
   );
 }
 
-function DayCard({ r, program, exp, best }: { r: RankedDay; program: Program; exp: Experience; best: boolean }) {
+function DayCard({
+  r,
+  program,
+  exp,
+  best,
+  onUseCardio,
+}: {
+  r: RankedDay;
+  program: Program;
+  exp: Experience;
+  best: boolean;
+  onUseCardio: (cardio: CardioPrescription) => void;
+}) {
   const [open, setOpen] = useState(false);
   const color = BAND_COLOR[bandFor(r.readiness)];
   return (
@@ -328,8 +379,44 @@ function DayCard({ r, program, exp, best }: { r: RankedDay; program: Program; ex
             Pegar treino
           </Link>
         </Button>
+        {r.day.cardio && (
+          <div className="mt-3">
+            <CardioRecommendation cardio={r.day.cardio} onUse={onUseCardio} compact />
+          </div>
+        )}
       </div>
     </li>
+  );
+}
+
+function CardioRecommendation({
+  cardio,
+  onUse,
+  compact = false,
+}: {
+  cardio: CardioPrescription;
+  onUse: (cardio: CardioPrescription) => void;
+  compact?: boolean;
+}) {
+  return (
+    <div className={cn("rounded-2xl border border-primary/25 bg-accent/20 p-3", compact && "p-3")}>
+      <div className="flex items-start gap-2">
+        <HeartPulse className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+        <div className="min-w-0 flex-1">
+          <div className="text-xs font-medium">
+            Cardio · {cardio.activity} · {cardio.minutes} min
+          </div>
+          <p className="mt-0.5 text-[11px] text-muted-foreground">{cardio.focus}</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onUse(cardio)}
+        className="mt-2 text-xs font-medium text-primary hover:underline"
+      >
+        Usar esta sugestão no timer
+      </button>
+    </div>
   );
 }
 

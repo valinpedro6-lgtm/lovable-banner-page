@@ -16,6 +16,8 @@ export function workoutVolume(w: Workout): number {
 
 export function workoutTitle(w: Workout): string {
   const ms = workoutMuscles(w).map((m) => MUSCLES[m].short);
+  if (w.cardio && ms.length === 0) return `Cardio · ${w.cardio.activity}`;
+  if (w.cardio) return `${ms.slice(0, 3).join(" · ")} · ${w.cardio.activity}`;
   if (w.kind === "quick") return `Treino rápido · ${ms.join(", ")}`;
   return ms.slice(0, 3).join(" · ") + (ms.length > 3 ? ` +${ms.length - 3}` : "");
 }

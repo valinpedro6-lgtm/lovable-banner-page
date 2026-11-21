@@ -1,0 +1,40 @@
+import { describe, expect, it } from "vitest";
+import { formatTimer, remindersCrossed, type CardioReminder } from "@/lib/cardio-timer";
+import type { Workout } from "@/lib/types";
+import { workoutTitle } from "@/lib/workout-utils";
+
+const reminders: CardioReminder[] = [
+  { id: "water", minute: 12, message: "Beber água" },
+  { id: "pace", minute: 30, message: "Ajustar ritmo" },
+];
+
+describe("cardio timer helpers", () => {
+  it("formats elapsed and long countdowns as mm:ss", () => {
+    expect(formatTimer(0)).toBe("00:00");
+    expect(formatTimer(12 * 60 + 7)).toBe("12:07");
+    expect(formatTimer(45 * 60)).toBe("45:00");
+    expect(formatTimer(-4)).toBe("00:00");
+  });
+
+  it("returns only reminders crossed during a tick, including long background ticks", () => {
+    expect(remindersCrossed(11 * 60 + 58, 12 * 60 + 2, reminders, new Set())).toEqual([
+      reminders[0],
+    ]);
+    expect(remindersCrossed(10 * 60, 31 * 60, reminders, new Set())).toEqual(reminders);
+  });
+
+  it("does not return reminders that already fired or are still ahead", () => {
+    expect(remindersCrossed(12 * 60, 15 * 60, reminders, new Set(["water"]))).toEqual([]);
+  });
+
+  it("labels cardio-only sessions correctly in history", () => {
+    const workout: Workout = {
+      id: "cardio-1",
+      date: new Date(0).toISOString(),
+      kind: "quick",
+      entries: [],
+      cardio: { activity: "Corrida", durationSeconds: 12 * 60 },
+    };
+    expect(workoutTitle(workout)).toBe("Cardio · Corrida");
+  });
+});

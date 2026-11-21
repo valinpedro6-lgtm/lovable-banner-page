@@ -248,8 +248,11 @@ function WorkoutItem({ w, custom }: { w: Workout; custom: { id: string; name: st
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-medium">{workoutTitle(w)}</div>
           <div className="text-xs text-muted-foreground">
-            {timeLabel(w.date)} · {w.entries.length} {w.kind === "quick" ? "grupos" : "exercícios"} ·{" "}
-            {workoutSets(w)} séries{vol > 0 && ` · ${fmtVolume(vol)}`}
+            {timeLabel(w.date)} ·{" "}
+            {w.cardio
+              ? `${Math.round(w.cardio.durationSeconds / 60)} min cardio`
+              : `${w.entries.length} ${w.kind === "quick" ? "grupos" : "exercícios"} · ${workoutSets(w)} séries`}
+            {vol > 0 && ` · ${fmtVolume(vol)}`}
           </div>
         </div>
         <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", open && "rotate-180")} />

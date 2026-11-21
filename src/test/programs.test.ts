@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { MUSCLE_IDS } from "@/lib/muscles";
-import { adjustSets, bestDay, exerciseFor, parsePlan, programFor, PROGRAMS, rankDays } from "@/lib/programs";
+import {
+  adjustSets,
+  bestDay,
+  exerciseFor,
+  parsePlan,
+  programFor,
+  PROGRAMS,
+  rankDays,
+} from "@/lib/programs";
 import type { MuscleState } from "@/lib/recovery";
 
 const state = (muscle: (typeof MUSCLE_IDS)[number], pct: number): MuscleState => ({
@@ -24,6 +32,13 @@ describe("programs", () => {
 
   it("offers more than the original six splits", () => {
     expect(PROGRAMS.length).toBeGreaterThanOrEqual(12);
+  });
+
+  it("includes a hybrid split with strength and cardio on every session", () => {
+    const hybrid = programFor("Treino híbrido");
+    expect(hybrid.id).toBe("hibrido");
+    expect(hybrid.days).toHaveLength(4);
+    expect(hybrid.days.every((day) => day.items.length > 0 && day.cardio?.minutes)).toBe(true);
   });
 
   it("maps old saved split names to programs", () => {

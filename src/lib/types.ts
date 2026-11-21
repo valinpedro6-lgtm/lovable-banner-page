@@ -1,5 +1,8 @@
 import type { MuscleId } from "./muscles";
 
+export type CardioActivity =
+  "Corrida" | "Bicicleta" | "Caminhada inclinada" | "Elíptico" | "Remo" | "Corda" | "Escada";
+
 export interface WorkoutEntry {
   id: string;
   /** Exercise id from the library; absent for quick workouts. */
@@ -18,6 +21,8 @@ export interface Workout {
   kind: "full" | "quick";
   /** "programId.dayId" when started from a ready-made workout. */
   planId?: string;
+  /** Cardio completed during this session. It does not add muscle-recovery stimulus. */
+  cardio?: { activity: CardioActivity; durationSeconds: number };
   entries: WorkoutEntry[];
 }
 

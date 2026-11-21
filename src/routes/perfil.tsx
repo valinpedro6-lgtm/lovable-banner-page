@@ -43,7 +43,15 @@ const EXPERIENCE: [Experience, string, string][] = [
   ["intermediario", "Intermediário", "1–3 anos"],
   ["avancado", "Avançado", "3+ anos"],
 ];
-const SPLITS = ["Push / Pull / Legs", "Superior / Inferior", "Full body", "ABC", "ABCD", "Livre"];
+const SPLITS = [
+  "Push / Pull / Legs",
+  "Superior / Inferior",
+  "Full body",
+  "ABC",
+  "ABCD",
+  "Treino híbrido",
+  "Livre",
+];
 const NOTIFS: [keyof Omit<NotificationPrefs, "reminderTime">, string, string][] = [
   ["reminder", "Lembrete de treino", "Um aviso no horário escolhido"],
   ["recovery", "Músculo recuperado", "Quando um grupo chegar a 90 %"],
