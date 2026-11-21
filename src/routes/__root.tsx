@@ -4,17 +4,20 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { CardioTimer } from "@/components/CardioTimer";
 import { AppNav } from "@/components/AppNav";
 import { Toaster } from "@/components/ui/sonner";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { parseCardioPreset } from "@/lib/cardio-timer";
 
 function NotFoundComponent() {
   return (
@@ -154,13 +157,30 @@ function RootComponent() {
       <div className="min-h-screen grid-bg">
         <main className={`mx-auto min-h-screen max-w-lg px-5 ${showSplash ? "" : "pb-32"}`}>
           {/* Data lives on the device, so pages render after hydration. */}
-          {showSplash ? <Splash /> : <Outlet />}
+          {showSplash ? (
+            <Splash />
+          ) : (
+            <>
+              <Outlet />
+              <CardioTimerHost />
+            </>
+          )}
         </main>
         {!showSplash && <AppNav />}
       </div>
       <Toaster position="top-center" />
     </QueryClientProvider>
   );
+}
+
+function CardioTimerHost() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const search = useRouterState({
+    select: (state) => state.location.search as Record<string, unknown>,
+  });
+  const preset = useMemo(() => parseCardioPreset(search), [search]);
+
+  return <CardioTimer visible={pathname === "/cardio"} preset={preset} />;
 }
 
 function Splash() {

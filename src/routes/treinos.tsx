@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   CalendarDays,
   Check,
@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Disclaimer, PageHeader, SectionTitle } from "@/components/PageHeader";
-import { CardioTimer } from "@/components/CardioTimer";
 import { RecoveryRing } from "@/components/RecoveryRing";
 import { Button } from "@/components/ui/button";
 import { useEngine } from "@/hooks/use-engine";
@@ -60,11 +59,8 @@ export const Route = createFileRoute("/treinos")({
 function PlansPage() {
   const { app, states, workouts, now, recommendation } = useEngine();
   const program = programFor(app.profile.split);
+  const navigate = useNavigate();
   const [choosing, setChoosing] = useState(false);
-  const [timerPreset, setTimerPreset] = useState<
-    (CardioPrescription & { nonce: number }) | undefined
-  >();
-  const [timerPresetNonce, setTimerPresetNonce] = useState(0);
   const ranked = useMemo(() => rankDays(program, states, workouts, now), [program, states, workouts, now]);
   const best = bestDay(ranked);
   const exp = app.profile.experience;
@@ -76,16 +72,10 @@ function PlansPage() {
     ? new Date(`${scheduleStart}T00:00:00`)
     : currentDate;
   const useCardioPreset = (cardio: CardioPrescription) => {
-    const nonce = timerPresetNonce + 1;
-    setTimerPresetNonce(nonce);
-    setTimerPreset({ ...cardio, nonce });
-    window.setTimeout(
-      () =>
-        document
-          .getElementById("cardio-timer")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
-      50,
-    );
+    void navigate({
+      to: "/cardio",
+      search: { ...cardio, nonce: Date.now() },
+    });
   };
 
   return (
@@ -213,8 +203,6 @@ function PlansPage() {
           </p>
         </section>
       )}
-
-      <CardioTimer key={timerPreset?.nonce ?? 0} preset={timerPreset} />
 
       {/* Recommended */}
       {best && (
@@ -414,7 +402,7 @@ function CardioRecommendation({
         onClick={() => onUse(cardio)}
         className="mt-2 text-xs font-medium text-primary hover:underline"
       >
-        Usar esta sugestão no timer
+        Abrir na aba Cardio
       </button>
     </div>
   );

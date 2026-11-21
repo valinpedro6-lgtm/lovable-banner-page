@@ -10,10 +10,34 @@ export const CARDIO_ACTIVITY_OPTIONS: { value: CardioActivity; label: string }[]
   { value: "Escada", label: "Escada" },
 ];
 
+export interface CardioPreset {
+  activity: CardioActivity;
+  minutes: number;
+  nonce: number;
+}
+
 export interface CardioReminder {
   id: string;
   minute: number;
   message: string;
+}
+
+export function parseCardioPreset(search: Record<string, unknown>): CardioPreset | undefined {
+  const activity = CARDIO_ACTIVITY_OPTIONS.find(
+    (option) => option.value === search.activity,
+  )?.value;
+  const rawMinutes = search.minutes;
+  const minutes = typeof rawMinutes === "number" ? rawMinutes : Number(rawMinutes);
+  const rawNonce = search.nonce;
+  const nonce = typeof rawNonce === "number" ? rawNonce : Number(rawNonce);
+
+  if (!activity || !Number.isInteger(minutes) || minutes < 1 || minutes > 180) return undefined;
+
+  return {
+    activity,
+    minutes,
+    nonce: Number.isSafeInteger(nonce) && nonce >= 0 ? nonce : 0,
+  };
 }
 
 export function formatTimer(seconds: number): string {

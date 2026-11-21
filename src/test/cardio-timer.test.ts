@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { formatTimer, remindersCrossed, type CardioReminder } from "@/lib/cardio-timer";
+import {
+  formatTimer,
+  parseCardioPreset,
+  remindersCrossed,
+  type CardioReminder,
+} from "@/lib/cardio-timer";
 import type { Workout } from "@/lib/types";
 import { workoutTitle } from "@/lib/workout-utils";
 
@@ -14,6 +19,16 @@ describe("cardio timer helpers", () => {
     expect(formatTimer(12 * 60 + 7)).toBe("12:07");
     expect(formatTimer(45 * 60)).toBe("45:00");
     expect(formatTimer(-4)).toBe("00:00");
+  });
+
+  it("parses valid hybrid cardio presets and rejects invalid search values", () => {
+    expect(parseCardioPreset({ activity: "Bicicleta", minutes: "20", nonce: "42" })).toEqual({
+      activity: "Bicicleta",
+      minutes: 20,
+      nonce: 42,
+    });
+    expect(parseCardioPreset({ activity: "Flying", minutes: 20 })).toBeUndefined();
+    expect(parseCardioPreset({ activity: "Corrida", minutes: 181 })).toBeUndefined();
   });
 
   it("returns only reminders crossed during a tick, including long background ticks", () => {

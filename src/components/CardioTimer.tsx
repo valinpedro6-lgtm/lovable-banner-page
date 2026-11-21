@@ -1,25 +1,32 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { Bell, Check, Clock3, Plus, RotateCcw, Timer, Volume2, X } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import {
+  Bell,
+  Check,
+  ChevronRight,
+  Clock3,
+  Plus,
+  RotateCcw,
+  Timer,
+  Volume2,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   CARDIO_ACTIVITY_OPTIONS,
   formatTimer,
   remindersCrossed,
+  type CardioPreset,
   type CardioReminder,
 } from "@/lib/cardio-timer";
 import { actions, uid } from "@/lib/store";
 import type { CardioActivity } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-interface CardioPreset {
-  activity: CardioActivity;
-  minutes: number;
-}
-
 type NotificationState = NotificationPermission | "unsupported";
 
-export function CardioTimer({ preset }: { preset?: CardioPreset }) {
+export function CardioTimer({ preset, visible }: { preset?: CardioPreset; visible: boolean }) {
   const [activity, setActivity] = useState<CardioActivity>(preset?.activity ?? "Corrida");
   const [durationMinutes, setDurationMinutes] = useState(preset?.minutes ?? 45);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -30,6 +37,7 @@ export function CardioTimer({ preset }: { preset?: CardioPreset }) {
   const [saved, setSaved] = useState(false);
   const [notificationState, setNotificationState] = useState<NotificationState>("default");
   const startedAtRef = useRef<number | null>(null);
+  const appliedPresetRef = useRef<string | null>(null);
   const lastTickRef = useRef(0);
   const firedRef = useRef(new Set<string>());
   const audioRef = useRef<AudioContext | null>(null);
@@ -52,6 +60,23 @@ export function CardioTimer({ preset }: { preset?: CardioPreset }) {
         .catch(() => undefined);
     }
   }, []);
+
+  useEffect(() => {
+    if (!preset) return;
+    const key = `${preset.nonce}:${preset.activity}:${preset.minutes}`;
+    if (appliedPresetRef.current === key) return;
+    appliedPresetRef.current = key;
+    startedAtRef.current = null;
+    lastTickRef.current = 0;
+    firedRef.current.clear();
+    setActivity(preset.activity);
+    setDurationMinutes(preset.minutes);
+    setElapsedSeconds(0);
+    setRunning(false);
+    setReminders([]);
+    setReminderMinute(Math.min(12, Math.max(1, preset.minutes - 1)));
+    setSaved(false);
+  }, [preset]);
 
   const playChime = useCallback(() => {
     const context = audioRef.current;
@@ -246,6 +271,30 @@ export function CardioTimer({ preset }: { preset?: CardioPreset }) {
       description: `${activity} · ${Math.max(1, Math.round(currentElapsed / 60))} min`,
     });
   };
+
+  if (!visible) {
+    if (!running) return null;
+    return (
+      <div className="fixed inset-x-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-lg">
+        <Link
+          to="/cardio"
+          aria-label={`Voltar ao timer de cardio. ${formatTimer(remainingSeconds)} restantes.`}
+          className="panel flex items-center gap-3 border-primary/50 bg-background/95 p-3 shadow-xl backdrop-blur"
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-primary">
+            <Timer className="h-4 w-4" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-xs font-semibold">Cardio em andamento</span>
+            <span className="block truncate text-[11px] text-muted-foreground">
+              {activity} · faltam {formatTimer(remainingSeconds)}
+            </span>
+          </span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-primary" />
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <section id="cardio-timer" className="panel space-y-4 p-5 animate-rise">
