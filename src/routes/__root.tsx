@@ -8,7 +8,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -140,15 +140,23 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const hydrated = useHydrated();
+  const [splashDelayElapsed, setSplashDelayElapsed] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSplashDelayElapsed(true), 850);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const showSplash = !hydrated || !splashDelayElapsed;
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen grid-bg">
-        <main className="mx-auto min-h-screen max-w-lg px-5 pb-32">
+        <main className={`mx-auto min-h-screen max-w-lg px-5 ${showSplash ? "" : "pb-32"}`}>
           {/* Data lives on the device, so pages render after hydration. */}
-          {hydrated ? <Outlet /> : <Splash />}
+          {showSplash ? <Splash /> : <Outlet />}
         </main>
-        <AppNav />
+        {!showSplash && <AppNav />}
       </div>
       <Toaster position="top-center" />
     </QueryClientProvider>
@@ -157,11 +165,53 @@ function RootComponent() {
 
 function Splash() {
   return (
-    <div className="grid min-h-[70vh] place-items-center">
-      <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        <span className="h-2 w-2 rounded-full bg-primary animate-pulse-dot" />
-        Muscle Recovery
+    <section
+      role="status"
+      aria-live="polite"
+      aria-label="Carregando Muscle Recovery"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/[0.06] blur-3xl"
+      />
+      <div className="relative flex flex-col items-center">
+        <div className="relative mb-8 grid h-24 w-24 place-items-center">
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 rounded-full border border-primary/15 border-t-primary/90 animate-spin [animation-duration:2.4s] motion-reduce:animate-none"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute inset-[7px] rounded-full border border-white/[0.06]"
+          />
+          <img
+            src="/favicon.svg?v=2"
+            alt=""
+            className="relative h-14 w-14 rounded-2xl shadow-[0_0_32px_rgba(181,255,50,0.16)]"
+          />
+        </div>
+
+        <p className="font-display text-lg font-semibold tracking-[0.2em] text-foreground">
+          MUSCLE RECOVERY
+        </p>
+        <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.32em] text-muted-foreground">
+          Treino · recuperação · evolução
+        </p>
+
+        <div className="mt-10 flex items-center gap-2" aria-hidden="true">
+          {[0, 1, 2].map((dot) => (
+            <span
+              key={dot}
+              className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse motion-reduce:animate-none"
+              style={{ animationDelay: `${dot * 180}ms` }}
+            />
+          ))}
+        </div>
+        <p className="mt-3 text-[11px] tracking-wide text-muted-foreground">
+          Preparando seu painel…
+        </p>
       </div>
-    </div>
+    </section>
   );
 }
