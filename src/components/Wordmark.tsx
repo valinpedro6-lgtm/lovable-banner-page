@@ -100,7 +100,7 @@ function Letter({
       <motion.span
         ref={ref}
         className="inline-block will-change-transform"
-        style={reduced ? undefined : { x, y, fontWeight }}
+        style={reduced ? {} : { x, y, fontWeight }}
       >
         <motion.span
           className="inline-block"
