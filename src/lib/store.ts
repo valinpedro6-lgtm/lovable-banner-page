@@ -119,6 +119,9 @@ export const actions = {
   addCustomExercise(e: Exercise) {
     setState((s) => ({ ...s, customExercises: [...s.customExercises, e] }));
   },
+  removeCustomExercise(id: string) {
+    setState((s) => ({ ...s, customExercises: s.customExercises.filter((e) => e.id !== id) }));
+  },
   reset() {
     setState(() => DEFAULT_STATE);
   },

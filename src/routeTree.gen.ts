@@ -10,11 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ExerciciosRouteImport } from './routes/exercicios'
+import { Route as HistoricoRouteImport } from './routes/historico'
+import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as RegistrarRouteImport } from './routes/registrar'
+import { Route as StatusRouteImport } from './routes/status'
+import { Route as MusculoIdRouteImport } from './routes/musculo.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExerciciosRoute = ExerciciosRouteImport.update({
+  id: '/exercicios',
+  path: '/exercicios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegistrarRoute = RegistrarRouteImport.update({
@@ -22,31 +42,83 @@ const RegistrarRoute = RegistrarRouteImport.update({
   path: '/registrar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MusculoIdRoute = MusculoIdRouteImport.update({
+  id: '/musculo/$id',
+  path: '/musculo/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/exercicios': typeof ExerciciosRoute
+  '/historico': typeof HistoricoRoute
+  '/perfil': typeof PerfilRoute
   '/registrar': typeof RegistrarRoute
+  '/status': typeof StatusRoute
+  '/musculo/$id': typeof MusculoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/exercicios': typeof ExerciciosRoute
+  '/historico': typeof HistoricoRoute
+  '/perfil': typeof PerfilRoute
   '/registrar': typeof RegistrarRoute
+  '/status': typeof StatusRoute
+  '/musculo/$id': typeof MusculoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/exercicios': typeof ExerciciosRoute
+  '/historico': typeof HistoricoRoute
+  '/perfil': typeof PerfilRoute
   '/registrar': typeof RegistrarRoute
+  '/status': typeof StatusRoute
+  '/musculo/$id': typeof MusculoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/registrar'
+  fullPaths:
+    | '/'
+    | '/exercicios'
+    | '/historico'
+    | '/perfil'
+    | '/registrar'
+    | '/status'
+    | '/musculo/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/registrar'
-  id: '__root__' | '/' | '/registrar'
+  to:
+    | '/'
+    | '/exercicios'
+    | '/historico'
+    | '/perfil'
+    | '/registrar'
+    | '/status'
+    | '/musculo/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/exercicios'
+    | '/historico'
+    | '/perfil'
+    | '/registrar'
+    | '/status'
+    | '/musculo/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ExerciciosRoute: typeof ExerciciosRoute
+  HistoricoRoute: typeof HistoricoRoute
+  PerfilRoute: typeof PerfilRoute
   RegistrarRoute: typeof RegistrarRoute
+  StatusRoute: typeof StatusRoute
+  MusculoIdRoute: typeof MusculoIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +130,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/exercicios': {
+      id: '/exercicios'
+      path: '/exercicios'
+      fullPath: '/exercicios'
+      preLoaderRoute: typeof ExerciciosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/registrar': {
       id: '/registrar'
       path: '/registrar'
@@ -65,12 +158,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegistrarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/musculo/$id': {
+      id: '/musculo/$id'
+      path: '/musculo/$id'
+      fullPath: '/musculo/$id'
+      preLoaderRoute: typeof MusculoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ExerciciosRoute: ExerciciosRoute,
+  HistoricoRoute: HistoricoRoute,
+  PerfilRoute: PerfilRoute,
   RegistrarRoute: RegistrarRoute,
+  StatusRoute: StatusRoute,
+  MusculoIdRoute: MusculoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

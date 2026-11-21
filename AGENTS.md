@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- App data lives on-device in `src/lib/store.ts` (localStorage, useSyncExternalStore); pages render after hydration, so no backend or loaders are needed for app data.
+- Recovery math stays in pure modules under `src/lib` (recovery, forecast, stats) so it can be unit-tested without the UI.
