@@ -73,8 +73,9 @@ function PlansPage() {
     : currentDate;
   const useCardioPreset = (cardio: CardioPrescription) => {
     void navigate({
-      to: "/cardio",
-      search: { ...cardio, nonce: Date.now() },
+      to: "/",
+      search: { activity: cardio.activity, minutes: cardio.minutes, nonce: Date.now() },
+      hash: "cardio-timer",
     });
   };
 
@@ -402,7 +403,7 @@ function CardioRecommendation({
         onClick={() => onUse(cardio)}
         className="mt-2 text-xs font-medium text-primary hover:underline"
       >
-        Abrir na aba Cardio
+        Abrir Cardio no início
       </button>
     </div>
   );

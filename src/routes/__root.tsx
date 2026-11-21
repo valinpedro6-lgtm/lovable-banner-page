@@ -180,7 +180,16 @@ function CardioTimerHost() {
   });
   const preset = useMemo(() => parseCardioPreset(search), [search]);
 
-  return <CardioTimer visible={pathname === "/cardio"} preset={preset} />;
+  useEffect(() => {
+    if (pathname !== "/" || !preset) return;
+    const timeout = window.setTimeout(
+      () => document.getElementById("cardio-timer")?.scrollIntoView({ behavior: "smooth" }),
+      100,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [pathname, preset?.nonce]);
+
+  return <CardioTimer visible={pathname === "/" || pathname === "/cardio"} preset={preset} />;
 }
 
 function Splash() {

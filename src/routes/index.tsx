@@ -8,6 +8,7 @@ import { RecoveryRing } from "@/components/RecoveryRing";
 import { RecoveryLegend, ViewToggle } from "@/components/ViewToggle";
 import { Button } from "@/components/ui/button";
 import { useEngine } from "@/hooks/use-engine";
+import { parseCardioPreset } from "@/lib/cardio-timer";
 import { relTime } from "@/lib/format";
 import { MUSCLES, type MuscleId } from "@/lib/muscles";
 import { BAND_COLOR } from "@/lib/recovery";
@@ -18,6 +19,12 @@ import { nextScheduledWorkout, scheduleAnchorDate } from "@/lib/training-schedul
 import { workoutSets, workoutTitle } from "@/lib/workout-utils";
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>) => {
+    const preset = parseCardioPreset(search);
+    return preset
+      ? { activity: preset.activity, minutes: preset.minutes, nonce: preset.nonce }
+      : {};
+  },
   head: () => ({
     meta: [
       { title: "Painel · MUSCLE RECOVERY" },
