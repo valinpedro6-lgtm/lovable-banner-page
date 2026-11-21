@@ -22,7 +22,7 @@ export const DEFAULT_STATE: AppState = {
     height: null,
     experience: "intermediario",
     weeklyFrequency: 4,
-    split: "Push / Pull / Legs",
+    split: "ppl",
   },
   notifications: {
     reminder: false,

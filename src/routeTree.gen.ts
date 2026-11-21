@@ -15,6 +15,7 @@ import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as RegistrarRouteImport } from './routes/registrar'
 import { Route as StatusRouteImport } from './routes/status'
+import { Route as TreinosRouteImport } from './routes/treinos'
 import { Route as MusculoIdRouteImport } from './routes/musculo.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +48,11 @@ const StatusRoute = StatusRouteImport.update({
   path: '/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TreinosRoute = TreinosRouteImport.update({
+  id: '/treinos',
+  path: '/treinos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MusculoIdRoute = MusculoIdRouteImport.update({
   id: '/musculo/$id',
   path: '/musculo/$id',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRoute
   '/registrar': typeof RegistrarRoute
   '/status': typeof StatusRoute
+  '/treinos': typeof TreinosRoute
   '/musculo/$id': typeof MusculoIdRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRoute
   '/registrar': typeof RegistrarRoute
   '/status': typeof StatusRoute
+  '/treinos': typeof TreinosRoute
   '/musculo/$id': typeof MusculoIdRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRoute
   '/registrar': typeof RegistrarRoute
   '/status': typeof StatusRoute
+  '/treinos': typeof TreinosRoute
   '/musculo/$id': typeof MusculoIdRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/registrar'
     | '/status'
+    | '/treinos'
     | '/musculo/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/registrar'
     | '/status'
+    | '/treinos'
     | '/musculo/$id'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/registrar'
     | '/status'
+    | '/treinos'
     | '/musculo/$id'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   PerfilRoute: typeof PerfilRoute
   RegistrarRoute: typeof RegistrarRoute
   StatusRoute: typeof StatusRoute
+  TreinosRoute: typeof TreinosRoute
   MusculoIdRoute: typeof MusculoIdRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/treinos': {
+      id: '/treinos'
+      path: '/treinos'
+      fullPath: '/treinos'
+      preLoaderRoute: typeof TreinosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/musculo/$id': {
       id: '/musculo/$id'
       path: '/musculo/$id'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerfilRoute: PerfilRoute,
   RegistrarRoute: RegistrarRoute,
   StatusRoute: StatusRoute,
+  TreinosRoute: TreinosRoute,
   MusculoIdRoute: MusculoIdRoute,
 }
 export const routeTree = rootRouteImport

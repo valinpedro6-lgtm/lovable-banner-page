@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, Circle, Minus, Plus, Trash2 } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { CheckCircle2, ChevronRight, Circle, ClipboardList, Minus, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BodyMap } from "@/components/BodyMap";
@@ -14,8 +14,13 @@ import { toLocalInput } from "@/lib/format";
 import { MUSCLES, type MuscleId } from "@/lib/muscles";
 import type { WorkoutEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { buildEntries, lastLoads, parsePlan, planKey, type PlanDay, type Program } from "@/lib/programs";
 
 export const Route = createFileRoute("/registrar")({
+  validateSearch: (s: Record<string, unknown>): { plano?: string } => {
+    const p = s["plano"];
+    return typeof p === "string" && p ? { plano: p } : {};
+  },
   head: () => ({
     meta: [
       { title: "Registrar treino · MUSCLE RECOVERY" },
@@ -30,7 +35,13 @@ export const Route = createFileRoute("/registrar")({
 });
 
 function RegisterPage() {
-  const [mode, setMode] = useState<"full" | "quick">("quick");
+  const { plano } = Route.useSearch();
+  return <RegisterBody key={plano ?? "none"} plano={plano} />;
+}
+
+function RegisterBody({ plano }: { plano: string | undefined }) {
+  const plan = parsePlan(plano);
+  const [mode, setMode] = useState<"full" | "quick">(plan ? "full" : "quick");
   return (
     <div>
       <PageHeader eyebrow="Novo registro" title={mode === "quick" ? "Músculos treinados" : "Treino completo"} />
@@ -53,7 +64,22 @@ function RegisterPage() {
           </button>
         ))}
       </div>
-      {mode === "quick" ? <QuickWorkout /> : <FullWorkout />}
+      {!plan && (
+        <Link
+          to="/treinos"
+          className="mb-5 flex items-center gap-3 rounded-2xl border border-primary/40 bg-accent/40 p-4 transition-colors hover:border-primary"
+        >
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lime-gradient text-primary-foreground">
+            <ClipboardList className="h-5 w-5" />
+          </span>
+          <span className="flex-1">
+            <span className="block text-sm font-medium">Usar um treino pronto</span>
+            <span className="block text-xs text-muted-foreground">O app indica o melhor treino para hoje</span>
+          </span>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Link>
+      )}
+      {mode === "quick" ? <QuickWorkout /> : <FullWorkout plan={plan} />}
     </div>
   );
 }
@@ -188,19 +214,15 @@ interface Draft extends WorkoutEntry {
   name: string;
 }
 
-function FullWorkout() {
+function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null }) {
   const navigate = useNavigate();
   const app = useAppState();
   const [date, setDate] = useState(() => toLocalInput(new Date()));
-  const [entries, setEntries] = useState<Draft[]>([]);
+  const lastLoad = useMemo(() => lastLoads(app.workouts), [app.workouts]);
+  const [entries, setEntries] = useState<Draft[]>(() =>
+    plan ? buildEntries(plan.day, app.profile.experience, lastLoad).map((e) => ({ ...e, id: uid() })) : [],
+  );
   const [picker, setPicker] = useState(false);
-
-  const lastLoad = useMemo(() => {
-    const map = new Map<string, number>();
-    const sorted = [...app.workouts].sort((a, b) => a.date.localeCompare(b.date));
-    for (const w of sorted) for (const e of w.entries) if (e.exerciseId) map.set(e.exerciseId, e.load);
-    return map;
-  }, [app.workouts]);
 
   const add = (ex: Exercise) => {
     setEntries((s) => [
@@ -228,6 +250,7 @@ function FullWorkout() {
       id: uid(),
       kind: "full",
       date: new Date(date).toISOString(),
+      ...(plan ? { planId: planKey(plan.program, plan.day) } : {}),
       entries: entries.map(({ name: _n, ...e }) => e),
     });
     toast.success("Treino salvo", { description: `${entries.length} exercícios registrados.` });
@@ -236,6 +259,18 @@ function FullWorkout() {
 
   return (
     <div className="space-y-4 animate-rise">
+      {plan && (
+        <div className="panel flex items-center justify-between gap-3 p-4">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-primary">Treino pronto · {plan.program.name}</div>
+            <div className="truncate font-display text-base font-semibold">{plan.day.name}</div>
+            <div className="text-xs text-muted-foreground">Ajuste cargas e séries como quiser antes de salvar.</div>
+          </div>
+          <Link to="/treinos" className="shrink-0 text-xs text-primary">
+            Trocar
+          </Link>
+        </div>
+      )}
       <DateField value={date} onChange={setDate} />
 
       {entries.map((e, idx) => (

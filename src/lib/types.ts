@@ -16,6 +16,8 @@ export interface Workout {
   id: string;
   date: string; // ISO
   kind: "full" | "quick";
+  /** "programId.dayId" when started from a ready-made workout. */
+  planId?: string;
   entries: WorkoutEntry[];
 }
 
