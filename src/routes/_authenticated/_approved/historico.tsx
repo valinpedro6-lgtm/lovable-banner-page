@@ -87,7 +87,7 @@ function HistoryPage() {
             Registre seu primeiro treino para ver gráficos de volume, constância e recordes.
           </p>
           <div className="mt-5 flex gap-2">
-            <Button asChild variant="lime" size="pill" className="flex-1">
+            <Button asChild variant="silver" size="pill" className="flex-1">
               <Link to="/registrar">Registrar treino</Link>
             </Button>
             <Button
@@ -178,7 +178,7 @@ function HistoryPage() {
                   </div>
                   <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
                     <div
-                      className="h-full rounded-full bg-lime-gradient"
+                      className="h-full rounded-full bg-silver-gradient"
                       style={{ width: `${(v / maxDist) * 100}%`, transition: "width 1s" }}
                     />
                   </div>

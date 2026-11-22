@@ -5,7 +5,7 @@ const HOUR = 3_600_000;
 
 export type RecoveryBand = "low" | "mid" | "high" | "full";
 
-/** Spec thresholds: red 0–39, orange 40–69, yellow 70–89, green 90–100. */
+/** Spec thresholds: charcoal 0–39, gray 40–69, silver 70–89, white 90–100. */
 export function bandFor(pct: number): RecoveryBand {
   if (pct < 40) return "low";
   if (pct < 70) return "mid";

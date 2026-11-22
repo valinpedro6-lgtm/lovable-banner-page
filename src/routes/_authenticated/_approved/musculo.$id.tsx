@@ -128,7 +128,7 @@ function MusclePage() {
               </span>
             </button>
           </CheckInSheet>
-          <Button asChild variant="lime" size="pill" className="w-full">
+          <Button asChild variant="silver" size="pill" className="w-full">
             <Link to="/registrar">Registrar treino</Link>
           </Button>
         </div>

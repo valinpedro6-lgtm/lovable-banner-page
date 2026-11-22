@@ -365,7 +365,7 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
         </div>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-background">
           <div
-            className="h-full rounded-full bg-lime-gradient transition-[width] duration-300"
+            className="h-full rounded-full bg-silver-gradient transition-[width] duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -376,7 +376,7 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
 
       <div className="grid grid-cols-[1fr_auto] gap-2">
         <Button
-          variant={running ? "chip" : "lime"}
+          variant={running ? "chip" : "silver"}
           size="xl"
           onClick={running ? pauseTimer : startTimer}
           disabled={!running && elapsedSeconds >= durationSeconds}

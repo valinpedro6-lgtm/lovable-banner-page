@@ -151,7 +151,7 @@ function Dashboard() {
         {scheduledWorkout ? (
           <>
             <div className="flex items-start gap-4">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-lime-gradient text-primary-foreground glow">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-silver-gradient text-primary-foreground glow">
                 <Zap className="h-6 w-6" />
               </span>
               <div className="min-w-0 flex-1">
@@ -182,7 +182,7 @@ function Dashboard() {
                   <ListChecks className="h-4 w-4" /> Ver treino
                 </Link>
               </Button>
-              <Button asChild variant="lime" size="pill">
+              <Button asChild variant="silver" size="pill">
                 <Link to="/registrar" search={{ plano: planKey(scheduledProgram, scheduledWorkout.day) }}>
                   <Play className="h-4 w-4" /> Iniciar
                 </Link>
@@ -192,7 +192,7 @@ function Dashboard() {
         ) : (
           <>
             <div className="flex items-start gap-4">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-lime-gradient text-primary-foreground glow">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-silver-gradient text-primary-foreground glow">
                 {recommendation.kind === "train" ? <Zap className="h-6 w-6" /> : <Sparkles className="h-6 w-6" />}
               </span>
               <div className="min-w-0 flex-1">
@@ -212,7 +212,7 @@ function Dashboard() {
                 )}
               </div>
             </div>
-            <Button asChild variant="lime" size="pill" className="mt-4 w-full">
+            <Button asChild variant="silver" size="pill" className="mt-4 w-full">
               <Link to="/treinos">
                 <ListChecks className="h-4 w-4" /> Abrir treino indicado
               </Link>
@@ -252,7 +252,7 @@ function Dashboard() {
               Nenhum treino ainda. Registre o primeiro ou veja o app com dados de exemplo.
             </p>
             <div className="flex gap-2">
-              <Button asChild variant="lime" size="pill" className="flex-1">
+              <Button asChild variant="silver" size="pill" className="flex-1">
                 <Link to="/registrar">Registrar treino</Link>
               </Button>
               <Button

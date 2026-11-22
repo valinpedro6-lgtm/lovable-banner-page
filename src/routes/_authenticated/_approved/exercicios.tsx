@@ -67,7 +67,7 @@ function ExercisesPage() {
           <button
             onClick={() => setCreating(true)}
             aria-label="Criar exercício"
-            className="grid h-10 w-10 place-items-center rounded-full bg-lime-gradient text-primary-foreground glow transition-transform active:scale-95"
+            className="grid h-10 w-10 place-items-center rounded-full bg-silver-gradient text-primary-foreground glow transition-transform active:scale-95"
           >
             <Plus className="h-5 w-5" strokeWidth={2.5} />
           </button>
@@ -330,7 +330,7 @@ function CustomExerciseSheet({ open, onOpenChange }: { open: boolean; onOpenChan
               </div>
             </Field>
             <Button
-              variant="lime"
+              variant="silver"
               size="xl"
               className={cn("w-full")}
               disabled={!name.trim() || !muscle}

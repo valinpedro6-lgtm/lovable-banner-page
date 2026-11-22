@@ -121,7 +121,7 @@ export function CheckInSheet({ children, focus }: { children: ReactNode; focus?:
                 })}
               </div>
             </section>
-            <Button variant="lime" size="xl" className="w-full" onClick={save}>
+            <Button variant="silver" size="xl" className="w-full" onClick={save}>
               Salvar check-in
             </Button>
           </div>

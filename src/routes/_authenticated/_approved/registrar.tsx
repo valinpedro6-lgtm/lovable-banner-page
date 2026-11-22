@@ -69,7 +69,7 @@ function RegisterBody({ plano }: { plano: string | undefined }) {
           to="/treinos"
           className="mb-5 flex items-center gap-3 rounded-2xl border border-primary/40 bg-accent/40 p-4 transition-colors hover:border-primary"
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lime-gradient text-primary-foreground">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-silver-gradient text-primary-foreground">
             <ClipboardList className="h-5 w-5" />
           </span>
           <span className="flex-1">
@@ -186,7 +186,7 @@ function QuickWorkout() {
           </div>
         </div>
         <DateField value={date} onChange={setDate} />
-        <Button variant="lime" size="xl" className="w-full" disabled={!selected.length} onClick={save}>
+        <Button variant="silver" size="xl" className="w-full" disabled={!selected.length} onClick={save}>
           Concluir {selected.length > 0 && `· ${selected.length}`}
         </Button>
       </div>
@@ -325,7 +325,7 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
         <Plus className="h-4 w-4" /> Adicionar exercício
       </button>
 
-      <Button variant="lime" size="xl" className="w-full" disabled={!entries.length} onClick={save}>
+      <Button variant="silver" size="xl" className="w-full" disabled={!entries.length} onClick={save}>
         Salvar treino
       </Button>
 

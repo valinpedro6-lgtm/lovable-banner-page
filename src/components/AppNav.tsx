@@ -19,7 +19,7 @@ export function AppNav() {
               <Link
                 to={it.to}
                 aria-label={it.label}
-                className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-lime-gradient text-primary-foreground glow transition-transform active:scale-95"
+                className="-mt-6 grid h-14 w-14 place-items-center rounded-full bg-silver-gradient text-primary-foreground glow transition-transform active:scale-95"
               >
                 <it.icon className="h-6 w-6" strokeWidth={2.5} />
               </Link>

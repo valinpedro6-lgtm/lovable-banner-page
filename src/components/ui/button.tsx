@@ -16,7 +16,7 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        lime: "bg-lime-gradient text-primary-foreground font-semibold glow hover:brightness-105 active:scale-[0.98] transition-transform",
+        silver: "bg-silver-gradient text-primary-foreground font-semibold glow hover:brightness-105 active:scale-[0.98] transition-transform",
         chip: "rounded-full border border-border bg-transparent text-foreground hover:border-muted-foreground",
         "chip-active": "rounded-full border border-primary bg-accent text-accent-foreground",
       },

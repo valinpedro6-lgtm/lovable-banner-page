@@ -1,8 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { forgetAccessCache } from "@/lib/access";
-import { Download, LogOut, RotateCcw, Sparkles, Upload } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Download, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
@@ -107,7 +104,7 @@ function ProfilePage() {
       <PageHeader eyebrow="Configurações" title="Perfil" showProfile={false} />
 
       <section className="panel flex items-center gap-4 p-5 animate-rise">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-lime-gradient font-display text-xl font-semibold text-primary-foreground glow">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-silver-gradient font-display text-xl font-semibold text-primary-foreground glow">
           {initials || "A"}
         </div>
         <div className="min-w-0 flex-1">
@@ -306,29 +303,7 @@ function ProfilePage() {
         </AlertDialog>
       </section>
 
-      <SignOutButton />
     </div>
-  );
-}
-
-function SignOutButton() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  return (
-    <Button
-      variant="chip"
-      size="pill"
-      className="w-full"
-      onClick={async () => {
-        await queryClient.cancelQueries();
-        queryClient.clear();
-        forgetAccessCache();
-        await supabase.auth.signOut();
-        void navigate({ to: "/auth", replace: true });
-      }}
-    >
-      <LogOut className="h-4 w-4" /> Sair da conta
-    </Button>
   );
 }
 

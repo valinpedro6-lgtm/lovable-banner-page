@@ -43,7 +43,7 @@ const DETAIL_BACK = ["M84 222 Q85 240 85 262", "M58 104 Q57 116 59 128", "M88 18
 export interface BodyMapProps {
   view: "front" | "back";
   fills: Partial<Record<MuscleId, string>>;
-  /** Muscles drawn at full opacity with a lime outline (selection mode). */
+  /** Muscles drawn at full opacity with a silver outline (selection mode). */
   highlighted?: MuscleId[];
   dimUnfilled?: boolean;
   onSelect?: (m: MuscleId) => void;

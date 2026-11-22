@@ -229,7 +229,7 @@ function PlansPage() {
           {best.day.cardio && (
             <CardioRecommendation cardio={best.day.cardio} onUse={useCardioPreset} />
           )}
-          <Button asChild variant="lime" size="xl" className="mt-4 w-full">
+          <Button asChild variant="silver" size="xl" className="mt-4 w-full">
             <Link to="/registrar" search={{ plano: planKey(program, best.day) }}>
               <Dumbbell className="h-5 w-5" /> Pegar este treino
             </Link>
@@ -363,7 +363,7 @@ function DayCard({
         </div>
       )}
       <div className="px-4 pb-4">
-        <Button asChild variant={best ? "lime" : "chip"} size="pill" className="w-full">
+        <Button asChild variant={best ? "silver" : "chip"} size="pill" className="w-full">
           <Link to="/registrar" search={{ plano: planKey(program, r.day) }}>
             Pegar treino
           </Link>
