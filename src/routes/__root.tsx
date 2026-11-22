@@ -3,6 +3,7 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
+  useRouter,
   useRouterState,
   HeadContent,
   Scripts,
@@ -17,6 +18,7 @@ import { AppNav } from "@/components/AppNav";
 import { Toaster } from "@/components/ui/sonner";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { parseCardioPreset } from "@/lib/cardio-timer";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -24,9 +26,7 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Página não encontrada</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Essa página não existe ou foi movida.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Essa página não existe ou foi movida.</p>
         <div className="mt-6">
           <Link
             to="/"
@@ -80,9 +80,6 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
-    // Replace these placeholders with the app's name and description when first building the app.
-    // Each content route, / included, must still set its own head(). Never add og:image or
-    // twitter:image here: every page without its own would inherit the root's preview image.
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -104,10 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg?v=2", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=2", sizes: "180x180" },
       { rel: "manifest", href: "/manifest.webmanifest" },
@@ -142,6 +136,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const hydrated = useHydrated();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [splashDelayElapsed, setSplashDelayElapsed] = useState(false);
 
   useEffect(() => {
@@ -149,7 +144,19 @@ function RootComponent() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      window.setTimeout(() => {
+        if (event === "SIGNED_OUT") queryClient.clear();
+        else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED")
+          void queryClient.invalidateQueries();
+      }, 0);
+    });
+    return () => data.subscription.unsubscribe();
+  }, [queryClient]);
+
   const showSplash = !hydrated || !splashDelayElapsed;
+  const showNavigation = pathname !== "/auth" && pathname !== "/dev-access";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -165,7 +172,7 @@ function RootComponent() {
             </>
           )}
         </main>
-        {!showSplash && <AppNav />}
+        {!showSplash && showNavigation && <AppNav />}
       </div>
       <Toaster position="top-center" />
     </QueryClientProvider>
@@ -186,7 +193,7 @@ function CardioTimerHost() {
       100,
     );
     return () => window.clearTimeout(timeout);
-  }, [pathname, preset?.nonce]);
+  }, [pathname, preset]);
 
   return <CardioTimer visible={pathname === "/" || pathname === "/cardio"} preset={preset} />;
 }
@@ -216,17 +223,15 @@ function Splash() {
           <img
             src="/favicon.svg?v=2"
             alt=""
-            className="relative h-14 w-14 rounded-2xl shadow-[0_0_32px_rgba(181,255,50,0.16)]"
+            className="relative h-14 w-14 rounded-2xl shadow-[0_0_32px_rgba(192,192,192,0.16)]"
           />
         </div>
-
         <p className="font-display text-lg font-semibold tracking-[0.2em] text-foreground">
           MUSCLE RECOVERY
         </p>
         <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.32em] text-muted-foreground">
           Treino · recuperação · evolução
         </p>
-
         <div className="mt-10 flex items-center gap-2" aria-hidden="true">
           {[0, 1, 2].map((dot) => (
             <span

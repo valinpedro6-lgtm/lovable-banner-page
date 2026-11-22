@@ -6,7 +6,7 @@
 
 /*
  * MUSCLE RECOVERY design system: monochrome performance console.
- * Black / graphite surfaces, silver as the signal color, recovery scale charcoal -> silver.
+ * Black / graphite surfaces, silver as the signal color, recovery scale red -> orange -> yellow -> silver.
  */
 
 @theme inline {
@@ -82,17 +82,17 @@
   --muted-foreground: oklch(0.66 0.01 260);
   --accent: oklch(0.26 0.004 260);
   --accent-foreground: oklch(0.93 0.003 260);
-  --destructive: oklch(0.68 0 0);
-  --destructive-foreground: oklch(0.12 0 0);
+  --destructive: oklch(0.64 0.23 25);
+  --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.28 0.005 260);
   --input: oklch(0.3 0.005 260);
   --ring: oklch(0.78 0.004 260);
 
   --body: oklch(0.3 0.004 260);
   --body-line: oklch(0.14 0 0);
-  --rec-low: oklch(0.43 0 0);
-  --rec-mid: oklch(0.59 0 0);
-  --rec-high: oklch(0.76 0 0);
+  --rec-low: oklch(0.64 0.23 25);
+  --rec-mid: oklch(0.74 0.18 55);
+  --rec-high: oklch(0.88 0.17 95);
   --rec-full: oklch(0.92 0 0);
 
   --glow-primary: 0 0 24px -4px color-mix(in oklab, var(--primary) 28%, transparent);
@@ -101,10 +101,10 @@
   --gradient-silver: linear-gradient(135deg, oklch(0.88 0.004 260), oklch(0.68 0.006 260));
 
   --chart-1: oklch(0.92 0 0);
-  --chart-2: oklch(0.73 0 0);
-  --chart-3: oklch(0.56 0 0);
-  --chart-4: oklch(0.82 0 0);
-  --chart-5: oklch(0.43 0 0);
+  --chart-2: oklch(0.74 0.18 55);
+  --chart-3: oklch(0.64 0.23 25);
+  --chart-4: oklch(0.88 0.17 95);
+  --chart-5: oklch(0.7 0.02 260);
   --sidebar: oklch(0.15 0 0);
   --sidebar-foreground: oklch(0.97 0 0);
   --sidebar-primary: oklch(0.84 0.005 260);

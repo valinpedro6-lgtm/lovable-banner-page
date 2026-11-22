@@ -3,6 +3,7 @@ import { Download, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
+import { AccountControls } from "@/components/AccountControls";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -302,6 +303,8 @@ function ProfilePage() {
           </AlertDialogContent>
         </AlertDialog>
       </section>
+
+      <AccountControls />
 
     </div>
   );

@@ -2,16 +2,18 @@ import { describe, expect, it } from "vitest";
 import { devPasswordMatches } from "@/lib/dev-password";
 
 describe("developer password", () => {
-  it("accepts the exact developer password", () => {
-    expect(devPasswordMatches("28208778", "28208778")).toBe(true);
+  const testSecret = "synthetic-test-passphrase";
+
+  it("accepts the exact configured password", () => {
+    expect(devPasswordMatches(testSecret, testSecret)).toBe(true);
   });
 
   it("rejects a different or prefixed password", () => {
-    expect(devPasswordMatches("28208779", "28208778")).toBe(false);
-    expect(devPasswordMatches("M28208778", "28208778")).toBe(false);
+    expect(devPasswordMatches("different-test-passphrase", testSecret)).toBe(false);
+    expect(devPasswordMatches(`x${testSecret}`, testSecret)).toBe(false);
   });
 
   it("rejects everything when no password is configured", () => {
-    expect(devPasswordMatches("", "")).toBe(false);
+    expect(devPasswordMatches("anything", "")).toBe(false);
   });
 });
