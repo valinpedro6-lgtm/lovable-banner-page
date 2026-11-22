@@ -11,8 +11,8 @@ const items = [
 
 export function AppNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl">
-      <ul className="mx-auto grid max-w-lg grid-cols-5 items-end px-2 pt-2 pb-2">
+    <nav className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-40 mx-auto max-w-lg rounded-[28px] border border-white/10 bg-zinc-950/50 px-1 pt-1 pb-1 shadow-[0_16px_44px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.14)] backdrop-blur-2xl backdrop-saturate-150">
+      <ul className="mx-auto grid max-w-lg grid-cols-5 items-end px-1 pt-2 pb-2">
         {items.map((it) => (
           <li key={it.to} className="flex justify-center">
             {"center" in it ? (
