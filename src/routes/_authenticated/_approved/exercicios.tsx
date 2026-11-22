@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 const DESC = "Biblioteca com centenas de exercícios por músculo e equipamento, seus recordes e exercícios próprios.";
 
-export const Route = createFileRoute("/exercicios")({
+export const Route = createFileRoute("/_authenticated/_approved/exercicios")({
   validateSearch: (s: Record<string, unknown>): { m?: MuscleId } => {
     const m = s["m"];
     return typeof m === "string" && isMuscleId(m) ? { m } : {};

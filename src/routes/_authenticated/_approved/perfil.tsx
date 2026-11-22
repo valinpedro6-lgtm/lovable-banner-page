@@ -1,5 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Download, RotateCcw, Sparkles, Upload } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { forgetAccessCache } from "@/lib/access";
+import { Download, LogOut, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
@@ -24,7 +27,7 @@ import { scheduleAnchorDate, suggestedTrainingDays } from "@/lib/training-schedu
 
 const DESC = "Seus dados, nível de experiência e preferências ajustam a estimativa de recuperação.";
 
-export const Route = createFileRoute("/perfil")({
+export const Route = createFileRoute("/_authenticated/_approved/perfil")({
   head: () => ({
     meta: [
       { title: "Perfil · MUSCLE RECOVERY" },
@@ -302,7 +305,30 @@ function ProfilePage() {
           </AlertDialogContent>
         </AlertDialog>
       </section>
+
+      <SignOutButton />
     </div>
+  );
+}
+
+function SignOutButton() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return (
+    <Button
+      variant="chip"
+      size="pill"
+      className="w-full"
+      onClick={async () => {
+        await queryClient.cancelQueries();
+        queryClient.clear();
+        forgetAccessCache();
+        await supabase.auth.signOut();
+        void navigate({ to: "/auth", replace: true });
+      }}
+    >
+      <LogOut className="h-4 w-4" /> Sair da conta
+    </Button>
   );
 }
 

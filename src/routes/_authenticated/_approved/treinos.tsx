@@ -42,7 +42,7 @@ import { cn } from "@/lib/utils";
 
 const DESC = "Escolha sua divisão de treino e pegue o treino que o app indica para hoje, já montado.";
 
-export const Route = createFileRoute("/treinos")({
+export const Route = createFileRoute("/_authenticated/_approved/treinos")({
   head: () => ({
     meta: [
       { title: "Treinos prontos · MUSCLE RECOVERY" },

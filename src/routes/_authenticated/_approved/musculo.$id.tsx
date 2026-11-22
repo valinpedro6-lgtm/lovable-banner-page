@@ -15,7 +15,7 @@ import { BAND_COLOR, BAND_LABEL } from "@/lib/recovery";
 import { exerciseUsage, fmtSets, cap } from "@/lib/stats";
 import { exerciseName } from "@/lib/workout-utils";
 
-export const Route = createFileRoute("/musculo/$id")({
+export const Route = createFileRoute("/_authenticated/_approved/musculo/$id")({
   beforeLoad: ({ params }) => {
     if (!isMuscleId(params.id)) throw notFound();
   },

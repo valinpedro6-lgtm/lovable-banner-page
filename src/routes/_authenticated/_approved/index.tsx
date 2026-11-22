@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowUpRight, ChevronRight, HeartPulse, Sparkles, Zap } from "lucide-react";
+import { ArrowUpRight, ChevronRight, HeartPulse, ListChecks, Play, Sparkles, Zap } from "lucide-react";
 import { useState } from "react";
 import { BodyMap } from "@/components/BodyMap";
 import { CheckInSheet } from "@/components/CheckInSheet";
@@ -18,7 +18,7 @@ import { actions } from "@/lib/store";
 import { nextScheduledWorkout, scheduleAnchorDate } from "@/lib/training-schedule";
 import { workoutSets, workoutTitle } from "@/lib/workout-utils";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/_approved/")({
   validateSearch: (search: Record<string, unknown>) => {
     const preset = parseCardioPreset(search);
     return preset
@@ -139,7 +139,15 @@ function Dashboard() {
 
       {/* Next workout */}
       <section className="panel relative overflow-hidden p-5 animate-rise">
-        <SectionTitle>Próximo treino</SectionTitle>
+        <SectionTitle
+          action={
+            <Link to="/treinos" className="flex items-center gap-1 text-xs text-primary">
+              Treinos prontos <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          }
+        >
+          Próximo treino
+        </SectionTitle>
         {scheduledWorkout ? (
           <>
             <div className="flex items-start gap-4">
@@ -168,11 +176,18 @@ function Dashboard() {
                 </span>
               ))}
             </div>
-            <Button asChild variant="lime" size="pill" className="mt-4 w-full">
-              <Link to="/registrar" search={{ plano: planKey(scheduledProgram, scheduledWorkout.day) }}>
-                Registrar este treino
-              </Link>
-            </Button>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Button asChild variant="chip" size="pill">
+                <Link to="/treinos">
+                  <ListChecks className="h-4 w-4" /> Ver treino
+                </Link>
+              </Button>
+              <Button asChild variant="lime" size="pill">
+                <Link to="/registrar" search={{ plano: planKey(scheduledProgram, scheduledWorkout.day) }}>
+                  <Play className="h-4 w-4" /> Iniciar
+                </Link>
+              </Button>
+            </div>
           </>
         ) : (
           <>
@@ -197,11 +212,11 @@ function Dashboard() {
                 )}
               </div>
             </div>
-            {recommendation.kind === "train" && (
-              <Button asChild variant="lime" size="pill" className="mt-4 w-full">
-                <Link to="/registrar">Registrar este treino</Link>
-              </Button>
-            )}
+            <Button asChild variant="lime" size="pill" className="mt-4 w-full">
+              <Link to="/treinos">
+                <ListChecks className="h-4 w-4" /> Abrir treino indicado
+              </Link>
+            </Button>
           </>
         )}
       </section>

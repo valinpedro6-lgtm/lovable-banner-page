@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 const DESC = "Recuperação estimada de cada grupo muscular, previsão para as próximas 72 h e volume semanal.";
 
-export const Route = createFileRoute("/status")({
+export const Route = createFileRoute("/_authenticated/_approved/status")({
   head: () => ({
     meta: [
       { title: "Status muscular · MUSCLE RECOVERY" },

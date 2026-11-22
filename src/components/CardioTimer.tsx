@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 
 type NotificationState = NotificationPermission | "unsupported";
 
-export function CardioTimer({ preset, visible }: { preset?: CardioPreset; visible: boolean }) {
+export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undefined; visible: boolean }) {
   const [activity, setActivity] = useState<CardioActivity>(preset?.activity ?? "Corrida");
   const [durationMinutes, setDurationMinutes] = useState(preset?.minutes ?? 45);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);

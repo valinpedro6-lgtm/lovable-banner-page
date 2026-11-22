@@ -28,7 +28,7 @@ import { exerciseName, workoutSets, workoutTitle, workoutVolume } from "@/lib/wo
 
 const DESC = "Seus treinos, volume semanal, constância e distribuição de séries por músculo.";
 
-export const Route = createFileRoute("/historico")({
+export const Route = createFileRoute("/_authenticated/_approved/historico")({
   head: () => ({
     meta: [
       { title: "Histórico · MUSCLE RECOVERY" },

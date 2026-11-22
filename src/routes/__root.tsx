@@ -18,6 +18,8 @@ import { AppNav } from "@/components/AppNav";
 import { Toaster } from "@/components/ui/sonner";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { parseCardioPreset } from "@/lib/cardio-timer";
+import { supabase } from "@/integrations/supabase/client";
+import { forgetAccessCache } from "@/lib/access";
 
 function NotFoundComponent() {
   return (
@@ -151,22 +153,34 @@ function RootComponent() {
   }, []);
 
   const showSplash = !hydrated || !splashDelayElapsed;
+  const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const onAuthPage = pathname === "/auth";
+
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      forgetAccessCache();
+      void router.invalidate();
+    });
+    return () => data.subscription.unsubscribe();
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen grid-bg">
-        <main className={`mx-auto min-h-screen max-w-lg px-5 ${showSplash ? "" : "pb-32"}`}>
+        <main className={`mx-auto min-h-screen max-w-lg px-5 ${showSplash || onAuthPage ? "" : "pb-32"}`}>
           {/* Data lives on the device, so pages render after hydration. */}
           {showSplash ? (
             <Splash />
           ) : (
             <>
               <Outlet />
-              <CardioTimerHost />
+              {!onAuthPage && <CardioTimerHost />}
             </>
           )}
         </main>
-        {!showSplash && <AppNav />}
+        {!showSplash && !onAuthPage && <AppNav />}
       </div>
       <Toaster position="top-center" />
     </QueryClientProvider>

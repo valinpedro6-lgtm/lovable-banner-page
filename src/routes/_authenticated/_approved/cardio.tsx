@@ -10,7 +10,7 @@ interface CardioSearch {
   nonce?: number;
 }
 
-export const Route = createFileRoute("/cardio")({
+export const Route = createFileRoute("/_authenticated/_approved/cardio")({
   validateSearch: (search: Record<string, unknown>): CardioSearch => {
     const preset = parseCardioPreset(search);
     return preset

@@ -9,100 +9,132 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as CardioRouteImport } from './routes/cardio'
-import { Route as ExerciciosRouteImport } from './routes/exercicios'
-import { Route as HistoricoRouteImport } from './routes/historico'
-import { Route as PerfilRouteImport } from './routes/perfil'
-import { Route as RegistrarRouteImport } from './routes/registrar'
-import { Route as StatusRouteImport } from './routes/status'
-import { Route as TreinosRouteImport } from './routes/treinos'
-import { Route as MusculoIdRouteImport } from './routes/musculo.$id'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedApprovedRouteRouteImport } from './routes/_authenticated/_approved/route'
+import { Route as AuthenticatedApprovedIndexRouteImport } from './routes/_authenticated/_approved/index'
+import { Route as AuthenticatedApprovedCardioRouteImport } from './routes/_authenticated/_approved/cardio'
+import { Route as AuthenticatedApprovedExerciciosRouteImport } from './routes/_authenticated/_approved/exercicios'
+import { Route as AuthenticatedApprovedHistoricoRouteImport } from './routes/_authenticated/_approved/historico'
+import { Route as AuthenticatedApprovedPerfilRouteImport } from './routes/_authenticated/_approved/perfil'
+import { Route as AuthenticatedApprovedRegistrarRouteImport } from './routes/_authenticated/_approved/registrar'
+import { Route as AuthenticatedApprovedStatusRouteImport } from './routes/_authenticated/_approved/status'
+import { Route as AuthenticatedApprovedTreinosRouteImport } from './routes/_authenticated/_approved/treinos'
+import { Route as AuthenticatedApprovedMusculoIdRouteImport } from './routes/_authenticated/_approved/musculo.$id'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CardioRoute = CardioRouteImport.update({
-  id: '/cardio',
-  path: '/cardio',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExerciciosRoute = ExerciciosRouteImport.update({
-  id: '/exercicios',
-  path: '/exercicios',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HistoricoRoute = HistoricoRouteImport.update({
-  id: '/historico',
-  path: '/historico',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerfilRoute = PerfilRouteImport.update({
-  id: '/perfil',
-  path: '/perfil',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegistrarRoute = RegistrarRouteImport.update({
-  id: '/registrar',
-  path: '/registrar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StatusRoute = StatusRouteImport.update({
-  id: '/status',
-  path: '/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TreinosRoute = TreinosRouteImport.update({
-  id: '/treinos',
-  path: '/treinos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MusculoIdRoute = MusculoIdRouteImport.update({
-  id: '/musculo/$id',
-  path: '/musculo/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedApprovedRouteRoute =
+  AuthenticatedApprovedRouteRouteImport.update({
+    id: '/_approved',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedApprovedIndexRoute =
+  AuthenticatedApprovedIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedCardioRoute =
+  AuthenticatedApprovedCardioRouteImport.update({
+    id: '/cardio',
+    path: '/cardio',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedExerciciosRoute =
+  AuthenticatedApprovedExerciciosRouteImport.update({
+    id: '/exercicios',
+    path: '/exercicios',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedHistoricoRoute =
+  AuthenticatedApprovedHistoricoRouteImport.update({
+    id: '/historico',
+    path: '/historico',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedPerfilRoute =
+  AuthenticatedApprovedPerfilRouteImport.update({
+    id: '/perfil',
+    path: '/perfil',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedRegistrarRoute =
+  AuthenticatedApprovedRegistrarRouteImport.update({
+    id: '/registrar',
+    path: '/registrar',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedStatusRoute =
+  AuthenticatedApprovedStatusRouteImport.update({
+    id: '/status',
+    path: '/status',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedTreinosRoute =
+  AuthenticatedApprovedTreinosRouteImport.update({
+    id: '/treinos',
+    path: '/treinos',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedMusculoIdRoute =
+  AuthenticatedApprovedMusculoIdRouteImport.update({
+    id: '/musculo/$id',
+    path: '/musculo/$id',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/cardio': typeof CardioRoute
-  '/exercicios': typeof ExerciciosRoute
-  '/historico': typeof HistoricoRoute
-  '/perfil': typeof PerfilRoute
-  '/registrar': typeof RegistrarRoute
-  '/status': typeof StatusRoute
-  '/treinos': typeof TreinosRoute
-  '/musculo/$id': typeof MusculoIdRoute
+  '/': typeof AuthenticatedApprovedIndexRoute
+  '/auth': typeof AuthRoute
+  '/cardio': typeof AuthenticatedApprovedCardioRoute
+  '/exercicios': typeof AuthenticatedApprovedExerciciosRoute
+  '/historico': typeof AuthenticatedApprovedHistoricoRoute
+  '/perfil': typeof AuthenticatedApprovedPerfilRoute
+  '/registrar': typeof AuthenticatedApprovedRegistrarRoute
+  '/status': typeof AuthenticatedApprovedStatusRoute
+  '/treinos': typeof AuthenticatedApprovedTreinosRoute
+  '/musculo/$id': typeof AuthenticatedApprovedMusculoIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/cardio': typeof CardioRoute
-  '/exercicios': typeof ExerciciosRoute
-  '/historico': typeof HistoricoRoute
-  '/perfil': typeof PerfilRoute
-  '/registrar': typeof RegistrarRoute
-  '/status': typeof StatusRoute
-  '/treinos': typeof TreinosRoute
-  '/musculo/$id': typeof MusculoIdRoute
+  '/': typeof AuthenticatedApprovedIndexRoute
+  '/auth': typeof AuthRoute
+  '/cardio': typeof AuthenticatedApprovedCardioRoute
+  '/exercicios': typeof AuthenticatedApprovedExerciciosRoute
+  '/historico': typeof AuthenticatedApprovedHistoricoRoute
+  '/perfil': typeof AuthenticatedApprovedPerfilRoute
+  '/registrar': typeof AuthenticatedApprovedRegistrarRoute
+  '/status': typeof AuthenticatedApprovedStatusRoute
+  '/treinos': typeof AuthenticatedApprovedTreinosRoute
+  '/musculo/$id': typeof AuthenticatedApprovedMusculoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/cardio': typeof CardioRoute
-  '/exercicios': typeof ExerciciosRoute
-  '/historico': typeof HistoricoRoute
-  '/perfil': typeof PerfilRoute
-  '/registrar': typeof RegistrarRoute
-  '/status': typeof StatusRoute
-  '/treinos': typeof TreinosRoute
-  '/musculo/$id': typeof MusculoIdRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/_approved': typeof AuthenticatedApprovedRouteRouteWithChildren
+  '/_authenticated/_approved/cardio': typeof AuthenticatedApprovedCardioRoute
+  '/_authenticated/_approved/exercicios': typeof AuthenticatedApprovedExerciciosRoute
+  '/_authenticated/_approved/historico': typeof AuthenticatedApprovedHistoricoRoute
+  '/_authenticated/_approved/perfil': typeof AuthenticatedApprovedPerfilRoute
+  '/_authenticated/_approved/registrar': typeof AuthenticatedApprovedRegistrarRoute
+  '/_authenticated/_approved/status': typeof AuthenticatedApprovedStatusRoute
+  '/_authenticated/_approved/treinos': typeof AuthenticatedApprovedTreinosRoute
+  '/_authenticated/_approved/': typeof AuthenticatedApprovedIndexRoute
+  '/_authenticated/_approved/musculo/$id': typeof AuthenticatedApprovedMusculoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/cardio'
     | '/exercicios'
     | '/historico'
@@ -114,6 +146,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/cardio'
     | '/exercicios'
     | '/historico'
@@ -124,107 +157,158 @@ export interface FileRouteTypes {
     | '/musculo/$id'
   id:
     | '__root__'
-    | '/'
-    | '/cardio'
-    | '/exercicios'
-    | '/historico'
-    | '/perfil'
-    | '/registrar'
-    | '/status'
-    | '/treinos'
-    | '/musculo/$id'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/_approved'
+    | '/_authenticated/_approved/cardio'
+    | '/_authenticated/_approved/exercicios'
+    | '/_authenticated/_approved/historico'
+    | '/_authenticated/_approved/perfil'
+    | '/_authenticated/_approved/registrar'
+    | '/_authenticated/_approved/status'
+    | '/_authenticated/_approved/treinos'
+    | '/_authenticated/_approved/'
+    | '/_authenticated/_approved/musculo/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CardioRoute: typeof CardioRoute
-  ExerciciosRoute: typeof ExerciciosRoute
-  HistoricoRoute: typeof HistoricoRoute
-  PerfilRoute: typeof PerfilRoute
-  RegistrarRoute: typeof RegistrarRoute
-  StatusRoute: typeof StatusRoute
-  TreinosRoute: typeof TreinosRoute
-  MusculoIdRoute: typeof MusculoIdRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/_approved': {
+      id: '/_authenticated/_approved'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedApprovedRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/_approved/': {
+      id: '/_authenticated/_approved/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedIndexRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/cardio': {
-      id: '/cardio'
+    '/_authenticated/_approved/cardio': {
+      id: '/_authenticated/_approved/cardio'
       path: '/cardio'
       fullPath: '/cardio'
-      preLoaderRoute: typeof CardioRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedCardioRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/exercicios': {
-      id: '/exercicios'
+    '/_authenticated/_approved/exercicios': {
+      id: '/_authenticated/_approved/exercicios'
       path: '/exercicios'
       fullPath: '/exercicios'
-      preLoaderRoute: typeof ExerciciosRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedExerciciosRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/historico': {
-      id: '/historico'
+    '/_authenticated/_approved/historico': {
+      id: '/_authenticated/_approved/historico'
       path: '/historico'
       fullPath: '/historico'
-      preLoaderRoute: typeof HistoricoRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedHistoricoRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/perfil': {
-      id: '/perfil'
+    '/_authenticated/_approved/perfil': {
+      id: '/_authenticated/_approved/perfil'
       path: '/perfil'
       fullPath: '/perfil'
-      preLoaderRoute: typeof PerfilRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedPerfilRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/registrar': {
-      id: '/registrar'
+    '/_authenticated/_approved/registrar': {
+      id: '/_authenticated/_approved/registrar'
       path: '/registrar'
       fullPath: '/registrar'
-      preLoaderRoute: typeof RegistrarRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedRegistrarRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/status': {
-      id: '/status'
+    '/_authenticated/_approved/status': {
+      id: '/_authenticated/_approved/status'
       path: '/status'
       fullPath: '/status'
-      preLoaderRoute: typeof StatusRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedStatusRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/treinos': {
-      id: '/treinos'
+    '/_authenticated/_approved/treinos': {
+      id: '/_authenticated/_approved/treinos'
       path: '/treinos'
       fullPath: '/treinos'
-      preLoaderRoute: typeof TreinosRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedTreinosRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
-    '/musculo/$id': {
-      id: '/musculo/$id'
+    '/_authenticated/_approved/musculo/$id': {
+      id: '/_authenticated/_approved/musculo/$id'
       path: '/musculo/$id'
       fullPath: '/musculo/$id'
-      preLoaderRoute: typeof MusculoIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedApprovedMusculoIdRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
   }
 }
 
+interface AuthenticatedApprovedRouteRouteChildren {
+  AuthenticatedApprovedCardioRoute: typeof AuthenticatedApprovedCardioRoute
+  AuthenticatedApprovedExerciciosRoute: typeof AuthenticatedApprovedExerciciosRoute
+  AuthenticatedApprovedHistoricoRoute: typeof AuthenticatedApprovedHistoricoRoute
+  AuthenticatedApprovedPerfilRoute: typeof AuthenticatedApprovedPerfilRoute
+  AuthenticatedApprovedRegistrarRoute: typeof AuthenticatedApprovedRegistrarRoute
+  AuthenticatedApprovedStatusRoute: typeof AuthenticatedApprovedStatusRoute
+  AuthenticatedApprovedTreinosRoute: typeof AuthenticatedApprovedTreinosRoute
+  AuthenticatedApprovedIndexRoute: typeof AuthenticatedApprovedIndexRoute
+  AuthenticatedApprovedMusculoIdRoute: typeof AuthenticatedApprovedMusculoIdRoute
+}
+
+const AuthenticatedApprovedRouteRouteChildren: AuthenticatedApprovedRouteRouteChildren =
+  {
+    AuthenticatedApprovedCardioRoute: AuthenticatedApprovedCardioRoute,
+    AuthenticatedApprovedExerciciosRoute: AuthenticatedApprovedExerciciosRoute,
+    AuthenticatedApprovedHistoricoRoute: AuthenticatedApprovedHistoricoRoute,
+    AuthenticatedApprovedPerfilRoute: AuthenticatedApprovedPerfilRoute,
+    AuthenticatedApprovedRegistrarRoute: AuthenticatedApprovedRegistrarRoute,
+    AuthenticatedApprovedStatusRoute: AuthenticatedApprovedStatusRoute,
+    AuthenticatedApprovedTreinosRoute: AuthenticatedApprovedTreinosRoute,
+    AuthenticatedApprovedIndexRoute: AuthenticatedApprovedIndexRoute,
+    AuthenticatedApprovedMusculoIdRoute: AuthenticatedApprovedMusculoIdRoute,
+  }
+
+const AuthenticatedApprovedRouteRouteWithChildren =
+  AuthenticatedApprovedRouteRoute._addFileChildren(
+    AuthenticatedApprovedRouteRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedApprovedRouteRoute: typeof AuthenticatedApprovedRouteRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedApprovedRouteRoute: AuthenticatedApprovedRouteRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CardioRoute: CardioRoute,
-  ExerciciosRoute: ExerciciosRoute,
-  HistoricoRoute: HistoricoRoute,
-  PerfilRoute: PerfilRoute,
-  RegistrarRoute: RegistrarRoute,
-  StatusRoute: StatusRoute,
-  TreinosRoute: TreinosRoute,
-  MusculoIdRoute: MusculoIdRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

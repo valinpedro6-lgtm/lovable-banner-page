@@ -24,11 +24,11 @@ export interface CardioReminder {
 
 export function parseCardioPreset(search: Record<string, unknown>): CardioPreset | undefined {
   const activity = CARDIO_ACTIVITY_OPTIONS.find(
-    (option) => option.value === search.activity,
+    (option) => option.value === search["activity"],
   )?.value;
-  const rawMinutes = search.minutes;
+  const rawMinutes = search["minutes"];
   const minutes = typeof rawMinutes === "number" ? rawMinutes : Number(rawMinutes);
-  const rawNonce = search.nonce;
+  const rawNonce = search["nonce"];
   const nonce = typeof rawNonce === "number" ? rawNonce : Number(rawNonce);
 
   if (!activity || !Number.isInteger(minutes) || minutes < 1 || minutes > 180) return undefined;

@@ -16,7 +16,7 @@ import type { WorkoutEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { buildEntries, lastLoads, parsePlan, planKey, type PlanDay, type Program } from "@/lib/programs";
 
-export const Route = createFileRoute("/registrar")({
+export const Route = createFileRoute("/_authenticated/_approved/registrar")({
   validateSearch: (s: Record<string, unknown>): { plano?: string } => {
     const p = s["plano"];
     return typeof p === "string" && p ? { plano: p } : {};
