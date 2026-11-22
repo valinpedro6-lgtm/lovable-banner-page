@@ -10,11 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedApprovedRouteRouteImport } from './routes/_authenticated/_approved/route'
-import { Route as AuthenticatedDevAccessRouteImport } from './routes/_authenticated/dev-access'
 import { Route as AuthenticatedApprovedIndexRouteImport } from './routes/_authenticated/_approved/index'
-import { Route as AuthenticatedApprovedAdminRouteImport } from './routes/_authenticated/_approved/admin'
 import { Route as AuthenticatedApprovedCardioRouteImport } from './routes/_authenticated/_approved/cardio'
 import { Route as AuthenticatedApprovedExerciciosRouteImport } from './routes/_authenticated/_approved/exercicios'
 import { Route as AuthenticatedApprovedHistoricoRouteImport } from './routes/_authenticated/_approved/historico'
@@ -28,31 +25,15 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedApprovedRouteRoute =
   AuthenticatedApprovedRouteRouteImport.update({
     id: '/_approved',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedDevAccessRoute = AuthenticatedDevAccessRouteImport.update({
-  id: '/dev-access',
-  path: '/dev-access',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedApprovedIndexRoute =
   AuthenticatedApprovedIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedApprovedRouteRoute,
-  } as any)
-const AuthenticatedApprovedAdminRoute =
-  AuthenticatedApprovedAdminRouteImport.update({
-    id: '/admin',
-    path: '/admin',
     getParentRoute: () => AuthenticatedApprovedRouteRoute,
   } as any)
 const AuthenticatedApprovedCardioRoute =
@@ -106,9 +87,6 @@ const AuthenticatedApprovedMusculoIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedApprovedIndexRoute
-  '/auth': typeof AuthRoute
-  '/dev-access': typeof AuthenticatedDevAccessRoute
-  '/admin': typeof AuthenticatedApprovedAdminRoute
   '/cardio': typeof AuthenticatedApprovedCardioRoute
   '/exercicios': typeof AuthenticatedApprovedExerciciosRoute
   '/historico': typeof AuthenticatedApprovedHistoricoRoute
@@ -120,9 +98,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedApprovedIndexRoute
-  '/auth': typeof AuthRoute
-  '/dev-access': typeof AuthenticatedDevAccessRoute
-  '/admin': typeof AuthenticatedApprovedAdminRoute
   '/cardio': typeof AuthenticatedApprovedCardioRoute
   '/exercicios': typeof AuthenticatedApprovedExerciciosRoute
   '/historico': typeof AuthenticatedApprovedHistoricoRoute
@@ -135,10 +110,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
   '/_authenticated/_approved': typeof AuthenticatedApprovedRouteRouteWithChildren
-  '/_authenticated/dev-access': typeof AuthenticatedDevAccessRoute
-  '/_authenticated/_approved/admin': typeof AuthenticatedApprovedAdminRoute
   '/_authenticated/_approved/cardio': typeof AuthenticatedApprovedCardioRoute
   '/_authenticated/_approved/exercicios': typeof AuthenticatedApprovedExerciciosRoute
   '/_authenticated/_approved/historico': typeof AuthenticatedApprovedHistoricoRoute
@@ -153,9 +125,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/auth'
-    | '/dev-access'
-    | '/admin'
     | '/cardio'
     | '/exercicios'
     | '/historico'
@@ -167,9 +136,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
-    | '/dev-access'
-    | '/admin'
     | '/cardio'
     | '/exercicios'
     | '/historico'
@@ -181,10 +147,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
-    | '/auth'
     | '/_authenticated/_approved'
-    | '/_authenticated/dev-access'
-    | '/_authenticated/_approved/admin'
     | '/_authenticated/_approved/cardio'
     | '/_authenticated/_approved/exercicios'
     | '/_authenticated/_approved/historico'
@@ -198,7 +161,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -210,13 +172,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/_approved': {
       id: '/_authenticated/_approved'
       path: ''
@@ -224,25 +179,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedApprovedRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/dev-access': {
-      id: '/_authenticated/dev-access'
-      path: '/dev-access'
-      fullPath: '/dev-access'
-      preLoaderRoute: typeof AuthenticatedDevAccessRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/_approved/': {
       id: '/_authenticated/_approved/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedApprovedIndexRouteImport
-      parentRoute: typeof AuthenticatedApprovedRouteRoute
-    }
-    '/_authenticated/_approved/admin': {
-      id: '/_authenticated/_approved/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedApprovedAdminRouteImport
       parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
     '/_authenticated/_approved/cardio': {
@@ -305,7 +246,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedApprovedRouteRouteChildren {
-  AuthenticatedApprovedAdminRoute: typeof AuthenticatedApprovedAdminRoute
   AuthenticatedApprovedCardioRoute: typeof AuthenticatedApprovedCardioRoute
   AuthenticatedApprovedExerciciosRoute: typeof AuthenticatedApprovedExerciciosRoute
   AuthenticatedApprovedHistoricoRoute: typeof AuthenticatedApprovedHistoricoRoute
@@ -319,7 +259,6 @@ interface AuthenticatedApprovedRouteRouteChildren {
 
 const AuthenticatedApprovedRouteRouteChildren: AuthenticatedApprovedRouteRouteChildren =
   {
-    AuthenticatedApprovedAdminRoute: AuthenticatedApprovedAdminRoute,
     AuthenticatedApprovedCardioRoute: AuthenticatedApprovedCardioRoute,
     AuthenticatedApprovedExerciciosRoute: AuthenticatedApprovedExerciciosRoute,
     AuthenticatedApprovedHistoricoRoute: AuthenticatedApprovedHistoricoRoute,
@@ -338,12 +277,10 @@ const AuthenticatedApprovedRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedApprovedRouteRoute: typeof AuthenticatedApprovedRouteRouteWithChildren
-  AuthenticatedDevAccessRoute: typeof AuthenticatedDevAccessRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedApprovedRouteRoute: AuthenticatedApprovedRouteRouteWithChildren,
-  AuthenticatedDevAccessRoute: AuthenticatedDevAccessRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -351,7 +288,6 @@ const AuthenticatedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

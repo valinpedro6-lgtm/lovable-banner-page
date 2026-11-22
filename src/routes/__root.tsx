@@ -18,7 +18,6 @@ import { AppNav } from "@/components/AppNav";
 import { Toaster } from "@/components/ui/sonner";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { parseCardioPreset } from "@/lib/cardio-timer";
-import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -136,7 +135,6 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const hydrated = useHydrated();
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [splashDelayElapsed, setSplashDelayElapsed] = useState(false);
 
   useEffect(() => {
@@ -144,19 +142,7 @@ function RootComponent() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      window.setTimeout(() => {
-        if (event === "SIGNED_OUT") queryClient.clear();
-        else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED")
-          void queryClient.invalidateQueries();
-      }, 0);
-    });
-    return () => data.subscription.unsubscribe();
-  }, [queryClient]);
-
   const showSplash = !hydrated || !splashDelayElapsed;
-  const showNavigation = pathname !== "/auth" && pathname !== "/dev-access";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -172,7 +158,7 @@ function RootComponent() {
             </>
           )}
         </main>
-        {!showSplash && showNavigation && <AppNav />}
+        {!showSplash && <AppNav />}
       </div>
       <Toaster position="top-center" />
     </QueryClientProvider>

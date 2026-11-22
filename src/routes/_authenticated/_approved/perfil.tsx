@@ -3,7 +3,6 @@ import { Download, RotateCcw, Sparkles, Upload } from "lucide-react";
 import { useRef } from "react";
 import { toast } from "sonner";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
-import { AccountControls } from "@/components/AccountControls";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -111,18 +110,32 @@ function ProfilePage() {
         <div className="min-w-0 flex-1">
           <div className="truncate font-display text-lg font-semibold">{p.name || "Atleta"}</div>
           <div className="text-xs text-muted-foreground">
-            {app.workouts.length} treinos · {app.checkIns.length} check-ins · {app.customExercises.length} exercícios
-            próprios
+            {app.workouts.length} treinos · {app.checkIns.length} check-ins ·{" "}
+            {app.customExercises.length} exercícios próprios
           </div>
         </div>
       </section>
 
       <section className="panel space-y-4 p-5 animate-rise">
         <SectionTitle>Sobre você</SectionTitle>
-        <TextField label="Nome" value={p.name} onChange={(v) => actions.updateProfile({ name: v })} />
+        <TextField
+          label="Nome"
+          value={p.name}
+          onChange={(v) => actions.updateProfile({ name: v })}
+        />
         <div className="grid grid-cols-3 gap-2">
-          <NumField label="Idade" unit="anos" value={p.age} onChange={(v) => actions.updateProfile({ age: v })} />
-          <NumField label="Peso" unit="kg" value={p.weight} onChange={(v) => actions.updateProfile({ weight: v })} />
+          <NumField
+            label="Idade"
+            unit="anos"
+            value={p.age}
+            onChange={(v) => actions.updateProfile({ age: v })}
+          />
+          <NumField
+            label="Peso"
+            unit="kg"
+            value={p.weight}
+            onChange={(v) => actions.updateProfile({ weight: v })}
+          />
           <NumField
             label="Altura"
             unit="cm"
@@ -202,7 +215,9 @@ function ProfilePage() {
                 }
                 className={cn(
                   "h-9 rounded-full border px-4 text-sm transition-colors",
-                  p.split === s ? "border-primary bg-accent text-accent-foreground" : "border-border text-muted-foreground",
+                  p.split === s
+                    ? "border-primary bg-accent text-accent-foreground"
+                    : "border-border text-muted-foreground",
                 )}
               >
                 {s}
@@ -285,7 +300,8 @@ function ProfilePage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Apagar todos os dados?</AlertDialogTitle>
               <AlertDialogDescription>
-                Treinos, check-ins, perfil e exercícios próprios serão removidos deste aparelho. Não dá para desfazer.
+                Treinos, check-ins, perfil e exercícios próprios serão removidos deste aparelho. Não
+                dá para desfazer.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -303,25 +319,39 @@ function ProfilePage() {
           </AlertDialogContent>
         </AlertDialog>
       </section>
-
-      <AccountControls />
-
     </div>
   );
 }
 
 function Label({ children }: { children: React.ReactNode }) {
-  return <div className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">{children}</div>;
+  return (
+    <div className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+      {children}
+    </div>
+  );
 }
 
 const inputCls =
   "h-12 w-full rounded-2xl border border-border bg-surface px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary";
 
-function TextField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function TextField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <label className="block">
       <Label>{label}</Label>
-      <input value={value} onChange={(e) => onChange(e.target.value)} placeholder="Seu nome" className={inputCls} />
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Seu nome"
+        className={inputCls}
+      />
     </label>
   );
 }

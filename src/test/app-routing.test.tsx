@@ -22,12 +22,17 @@ describe("App routing", () => {
     "/perfil",
     "/cardio",
     "/treinos",
-    "/auth",
-    "/dev-access",
-    "/admin",
     "/musculo/peitoral",
-  ])("matches a page for %s", (path) => {
+  ])("matches an app page for %s", (path) => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
     expect(router.matchRoutes(path).at(-1)?.routeId).not.toBe(rootRouteId);
   });
+
+  it.each(["/auth", "/dev-access", "/admin"])(
+    "does not expose removed account route %s",
+    (path) => {
+      const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+      expect(router.matchRoutes(path).at(-1)?.routeId).toBe(rootRouteId);
+    },
+  );
 });

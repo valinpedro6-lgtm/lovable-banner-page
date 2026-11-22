@@ -1,12 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { Activity, BarChart3, Dumbbell, Home, Plus, ShieldCheck } from "lucide-react";
+import { Activity, BarChart3, Dumbbell, Home, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { devStatus } from "@/lib/access.functions";
 
 type NavItemData = {
-  to: "/" | "/status" | "/exercicios" | "/historico" | "/admin";
+  to: "/" | "/status" | "/exercicios" | "/historico";
   label: string;
   icon: LucideIcon;
 };
@@ -22,18 +19,6 @@ const rightItems = [
 ] as const;
 
 export function AppNav() {
-  const getDevStatus = useServerFn(devStatus);
-  const dev = useQuery({
-    queryKey: ["dev-status"],
-    queryFn: () => getDevStatus(),
-    retry: false,
-    staleTime: 30_000,
-  });
-  const isDeveloper = dev.data?.unlocked === true;
-  const items = isDeveloper
-    ? [...rightItems, { to: "/admin" as const, label: "Aprovar", icon: ShieldCheck }]
-    : rightItems;
-
   return (
     <nav
       aria-label="Navegação principal"
@@ -42,8 +27,8 @@ export function AppNav() {
       <ul className="mx-auto grid max-w-lg grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] items-end px-1 pt-2 pb-2">
         <li>
           <div className="grid grid-cols-2 items-end">
-            {leftItems.map((it) => (
-              <NavItem key={it.to} item={it} />
+            {leftItems.map((item) => (
+              <NavItem key={item.to} item={item} />
             ))}
           </div>
         </li>
@@ -57,9 +42,9 @@ export function AppNav() {
           </Link>
         </li>
         <li>
-          <div className={`grid ${isDeveloper ? "grid-cols-3" : "grid-cols-2"} items-end`}>
-            {items.map((it) => (
-              <NavItem key={it.to} item={it} />
+          <div className="grid grid-cols-2 items-end">
+            {rightItems.map((item) => (
+              <NavItem key={item.to} item={item} />
             ))}
           </div>
         </li>
