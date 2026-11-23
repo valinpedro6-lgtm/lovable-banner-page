@@ -3,6 +3,8 @@ import { ChevronDown, Flame, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { WeeklyBars } from "@/components/Charts";
+import { BodyGoalChart } from "@/components/BodyGoalChart";
+import { FocusChart } from "@/components/FocusChart";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { useEngine } from "@/hooks/use-engine";
@@ -78,8 +80,10 @@ function HistoryPage() {
 
   if (done.length === 0) {
     return (
-      <div>
+      <div className="space-y-5">
         <PageHeader eyebrow="Seus treinos" title="Histórico" />
+        <BodyGoalChart profile={app.profile} weightHistory={app.weightHistory} />
+        <FocusChart workouts={done} now={now} weeklyGoal={app.profile.weeklyFrequency} />
         <div className="panel p-8 text-center animate-rise">
           <Flame className="mx-auto h-8 w-8 text-primary" />
           <h2 className="mt-3 font-display text-lg font-semibold">Nada por aqui ainda</h2>
@@ -110,6 +114,9 @@ function HistoryPage() {
   return (
     <div className="space-y-5">
       <PageHeader eyebrow="Últimos 30 dias" title="Histórico" />
+
+      <BodyGoalChart profile={app.profile} weightHistory={app.weightHistory} />
+      <FocusChart workouts={done} now={now} weeklyGoal={app.profile.weeklyFrequency} />
 
       <section className="grid grid-cols-2 gap-3 animate-rise">
         <Kpi label="Treinos" value={String(last30.length)} />

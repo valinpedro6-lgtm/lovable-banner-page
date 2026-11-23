@@ -17,7 +17,7 @@ export interface WorkoutEntry {
 
 export interface Workout {
   id: string;
-  date: string; // ISO
+  date: string;
   kind: "full" | "quick";
   /** "programId.dayId" when started from a ready-made workout. */
   planId?: string;
@@ -27,7 +27,6 @@ export interface Workout {
 }
 
 export type Soreness = 0 | 1 | 2 | 3;
-
 export interface CheckIn {
   id: string;
   date: string;
@@ -39,6 +38,21 @@ export interface CheckIn {
 }
 
 export type Experience = "iniciante" | "intermediario" | "avancado";
+export type BodyGoal = "manter" | "emagrecer" | "ganhar_massa" | "ganhar_peso";
+export type ActivityLevel = "sedentario" | "leve" | "moderado" | "alto";
+export type CalculationSex = "masculino" | "feminino" | null;
+
+export interface BodyMeasurements {
+  armCm: number | null;
+  waistCm: number | null;
+  chestCm: number | null;
+  hipCm: number | null;
+}
+
+export interface WeightLog {
+  date: string;
+  weight: number;
+}
 
 export interface Profile {
   name: string;
@@ -48,6 +62,14 @@ export interface Profile {
   experience: Experience;
   weeklyFrequency: number;
   split: string;
+  setupComplete?: boolean;
+  goal?: BodyGoal;
+  targetWeight?: number | null;
+  goalStartWeight?: number | null;
+  activityLevel?: ActivityLevel;
+  calculationSex?: CalculationSex;
+  waterGoalMl?: number;
+  measurements?: BodyMeasurements;
   /** JavaScript weekday numbers: Sunday = 0, Monday = 1, ... */
   trainingDays?: number[];
   /** Local YYYY-MM-DD for the first active day of the current training cycle. */

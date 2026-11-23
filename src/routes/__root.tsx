@@ -15,9 +15,11 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CardioTimer } from "@/components/CardioTimer";
 import { AppNav } from "@/components/AppNav";
+import { OnboardingWizard } from "@/components/OnboardingWizard";
 import { Toaster } from "@/components/ui/sonner";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { parseCardioPreset } from "@/lib/cardio-timer";
+import { useAppState } from "@/lib/store";
 
 function NotFoundComponent() {
   return (
@@ -135,6 +137,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const hydrated = useHydrated();
+  const app = useAppState();
   const [splashDelayElapsed, setSplashDelayElapsed] = useState(false);
 
   useEffect(() => {
@@ -143,14 +146,18 @@ function RootComponent() {
   }, []);
 
   const showSplash = !hydrated || !splashDelayElapsed;
+  const showOnboarding = !showSplash && !app.profile.setupComplete;
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen grid-bg">
-        <main className={`mx-auto min-h-screen max-w-lg px-5 ${showSplash ? "" : "pb-32"}`}>
-          {/* Data lives on the device, so pages render after hydration. */}
+        <main
+          className={`mx-auto min-h-screen max-w-lg px-5 ${showSplash || showOnboarding ? "" : "pb-32"}`}
+        >
           {showSplash ? (
             <Splash />
+          ) : showOnboarding ? (
+            <OnboardingWizard />
           ) : (
             <>
               <Outlet />
@@ -158,7 +165,7 @@ function RootComponent() {
             </>
           )}
         </main>
-        {!showSplash && <AppNav />}
+        {!showSplash && !showOnboarding && <AppNav />}
       </div>
       <Toaster position="top-center" />
     </QueryClientProvider>

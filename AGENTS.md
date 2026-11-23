@@ -31,6 +31,6 @@ use the editor.
 
 ## Project rules
 - App data lives on-device in `src/lib/store.ts` (localStorage, useSyncExternalStore); pages render after hydration, so no backend or loaders are needed for app data.
-- Recovery math stays in pure modules under `src/lib` (recovery, forecast, stats) so it can be unit-tested without the UI.
-- App pages live under `src/routes/_authenticated/_approved/`: `_authenticated` requires a signed-in account and `_approved` requires the developer to have approved that account's row in `access_requests`, because the app is invite-only to prevent piracy.
-- Developer approval runs only in server functions (`src/lib/access.functions.ts`) gated by an encrypted session unlocked with the server-only `DEV_ACCESS_PASSWORD` secret, so the password never ships to the browser and users cannot approve themselves.
+- Recovery and fitness-estimate calculations stay in pure modules under `src/lib` so they can be unit-tested without the UI.
+- Routes currently live under the pathless `_authenticated/_approved` folders for file organization only. The wrappers are pass-through layouts; the app no longer requires sign-in or developer approval.
+- Preserve the user's local workouts and profile when extending the store. Add defaults and normalize imported/older local backups rather than resetting them.

@@ -154,6 +154,73 @@ function ProfilePage() {
       </section>
 
       <section className="panel space-y-4 p-5 animate-rise">
+        <SectionTitle>Objetivo corporal</SectionTitle>
+        <label className="block">
+          <Label>Meta</Label>
+          <select
+            value={p.goal ?? "manter"}
+            onChange={(e) => {
+              const goal = e.target.value as NonNullable<typeof p.goal>;
+              actions.updateProfile({
+                goal,
+                goalStartWeight: p.weight,
+                targetWeight: goal === "manter" ? p.weight : (p.targetWeight ?? null),
+              });
+            }}
+            className={cn(inputCls, "[color-scheme:dark]")}
+          >
+            <option value="manter">Manter</option>
+            <option value="emagrecer">Emagrecer</option>
+            <option value="ganhar_massa">Ganhar massa muscular</option>
+            <option value="ganhar_peso">Ganhar peso</option>
+          </select>
+        </label>
+        {(p.goal ?? "manter") !== "manter" && (
+          <NumField
+            label="Peso-meta"
+            unit="kg"
+            value={p.targetWeight ?? null}
+            onChange={(value) => actions.updateProfile({ targetWeight: value, goalStartWeight: p.goalStartWeight ?? p.weight })}
+          />
+        )}
+        <label className="block">
+          <Label>Atividade fora dos treinos</Label>
+          <select
+            value={p.activityLevel ?? "leve"}
+            onChange={(e) => actions.updateProfile({ activityLevel: e.target.value as NonNullable<typeof p.activityLevel> })}
+            className={cn(inputCls, "[color-scheme:dark]")}
+          >
+            <option value="sedentario">Mais sentado(a)</option>
+            <option value="leve">Leve</option>
+            <option value="moderado">Moderada</option>
+            <option value="alto">Bem ativa</option>
+          </select>
+        </label>
+        <label className="block">
+          <Label>Parâmetro da fórmula de calorias (opcional)</Label>
+          <select
+            value={p.calculationSex ?? ""}
+            onChange={(e) => actions.updateProfile({ calculationSex: (e.target.value || null) as "masculino" | "feminino" | null })}
+            className={cn(inputCls, "[color-scheme:dark]")}
+          >
+            <option value="">Prefiro não informar</option>
+            <option value="feminino">Feminino</option>
+            <option value="masculino">Masculino</option>
+          </select>
+        </label>
+        <div>
+          <Label>Medidas opcionais · cm</Label>
+          <div className="grid grid-cols-2 gap-2">
+            <NumField label="Braço" unit="cm" value={p.measurements?.armCm ?? null} onChange={(armCm) => actions.updateProfile({ measurements: { ...(p.measurements ?? { armCm: null, waistCm: null, chestCm: null, hipCm: null }), armCm } })} />
+            <NumField label="Cintura" unit="cm" value={p.measurements?.waistCm ?? null} onChange={(waistCm) => actions.updateProfile({ measurements: { ...(p.measurements ?? { armCm: null, waistCm: null, chestCm: null, hipCm: null }), waistCm } })} />
+            <NumField label="Peito" unit="cm" value={p.measurements?.chestCm ?? null} onChange={(chestCm) => actions.updateProfile({ measurements: { ...(p.measurements ?? { armCm: null, waistCm: null, chestCm: null, hipCm: null }), chestCm } })} />
+            <NumField label="Quadril" unit="cm" value={p.measurements?.hipCm ?? null} onChange={(hipCm) => actions.updateProfile({ measurements: { ...(p.measurements ?? { armCm: null, waistCm: null, chestCm: null, hipCm: null }), hipCm } })} />
+          </div>
+        </div>
+        <p className="text-[11px] text-muted-foreground">Estimativas de referência não são prescrição. Alterações são salvas neste aparelho.</p>
+      </section>
+
+      <section className="panel space-y-4 p-5 animate-rise">
         <SectionTitle>Treino</SectionTitle>
         <div>
           <Label>Experiência</Label>

@@ -13,6 +13,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedApprovedRouteRouteImport } from './routes/_authenticated/_approved/route'
 import { Route as AuthenticatedApprovedIndexRouteImport } from './routes/_authenticated/_approved/index'
 import { Route as AuthenticatedApprovedCardioRouteImport } from './routes/_authenticated/_approved/cardio'
+import { Route as AuthenticatedApprovedDietaRouteImport } from './routes/_authenticated/_approved/dieta'
 import { Route as AuthenticatedApprovedExerciciosRouteImport } from './routes/_authenticated/_approved/exercicios'
 import { Route as AuthenticatedApprovedHistoricoRouteImport } from './routes/_authenticated/_approved/historico'
 import { Route as AuthenticatedApprovedPerfilRouteImport } from './routes/_authenticated/_approved/perfil'
@@ -40,6 +41,12 @@ const AuthenticatedApprovedCardioRoute =
   AuthenticatedApprovedCardioRouteImport.update({
     id: '/cardio',
     path: '/cardio',
+    getParentRoute: () => AuthenticatedApprovedRouteRoute,
+  } as any)
+const AuthenticatedApprovedDietaRoute =
+  AuthenticatedApprovedDietaRouteImport.update({
+    id: '/dieta',
+    path: '/dieta',
     getParentRoute: () => AuthenticatedApprovedRouteRoute,
   } as any)
 const AuthenticatedApprovedExerciciosRoute =
@@ -88,6 +95,7 @@ const AuthenticatedApprovedMusculoIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedApprovedIndexRoute
   '/cardio': typeof AuthenticatedApprovedCardioRoute
+  '/dieta': typeof AuthenticatedApprovedDietaRoute
   '/exercicios': typeof AuthenticatedApprovedExerciciosRoute
   '/historico': typeof AuthenticatedApprovedHistoricoRoute
   '/perfil': typeof AuthenticatedApprovedPerfilRoute
@@ -99,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedApprovedIndexRoute
   '/cardio': typeof AuthenticatedApprovedCardioRoute
+  '/dieta': typeof AuthenticatedApprovedDietaRoute
   '/exercicios': typeof AuthenticatedApprovedExerciciosRoute
   '/historico': typeof AuthenticatedApprovedHistoricoRoute
   '/perfil': typeof AuthenticatedApprovedPerfilRoute
@@ -112,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_authenticated/_approved': typeof AuthenticatedApprovedRouteRouteWithChildren
   '/_authenticated/_approved/cardio': typeof AuthenticatedApprovedCardioRoute
+  '/_authenticated/_approved/dieta': typeof AuthenticatedApprovedDietaRoute
   '/_authenticated/_approved/exercicios': typeof AuthenticatedApprovedExerciciosRoute
   '/_authenticated/_approved/historico': typeof AuthenticatedApprovedHistoricoRoute
   '/_authenticated/_approved/perfil': typeof AuthenticatedApprovedPerfilRoute
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cardio'
+    | '/dieta'
     | '/exercicios'
     | '/historico'
     | '/perfil'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cardio'
+    | '/dieta'
     | '/exercicios'
     | '/historico'
     | '/perfil'
@@ -149,6 +161,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/_authenticated/_approved'
     | '/_authenticated/_approved/cardio'
+    | '/_authenticated/_approved/dieta'
     | '/_authenticated/_approved/exercicios'
     | '/_authenticated/_approved/historico'
     | '/_authenticated/_approved/perfil'
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       path: '/cardio'
       fullPath: '/cardio'
       preLoaderRoute: typeof AuthenticatedApprovedCardioRouteImport
+      parentRoute: typeof AuthenticatedApprovedRouteRoute
+    }
+    '/_authenticated/_approved/dieta': {
+      id: '/_authenticated/_approved/dieta'
+      path: '/dieta'
+      fullPath: '/dieta'
+      preLoaderRoute: typeof AuthenticatedApprovedDietaRouteImport
       parentRoute: typeof AuthenticatedApprovedRouteRoute
     }
     '/_authenticated/_approved/exercicios': {
@@ -247,6 +267,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedApprovedRouteRouteChildren {
   AuthenticatedApprovedCardioRoute: typeof AuthenticatedApprovedCardioRoute
+  AuthenticatedApprovedDietaRoute: typeof AuthenticatedApprovedDietaRoute
   AuthenticatedApprovedExerciciosRoute: typeof AuthenticatedApprovedExerciciosRoute
   AuthenticatedApprovedHistoricoRoute: typeof AuthenticatedApprovedHistoricoRoute
   AuthenticatedApprovedPerfilRoute: typeof AuthenticatedApprovedPerfilRoute
@@ -260,6 +281,7 @@ interface AuthenticatedApprovedRouteRouteChildren {
 const AuthenticatedApprovedRouteRouteChildren: AuthenticatedApprovedRouteRouteChildren =
   {
     AuthenticatedApprovedCardioRoute: AuthenticatedApprovedCardioRoute,
+    AuthenticatedApprovedDietaRoute: AuthenticatedApprovedDietaRoute,
     AuthenticatedApprovedExerciciosRoute: AuthenticatedApprovedExerciciosRoute,
     AuthenticatedApprovedHistoricoRoute: AuthenticatedApprovedHistoricoRoute,
     AuthenticatedApprovedPerfilRoute: AuthenticatedApprovedPerfilRoute,
