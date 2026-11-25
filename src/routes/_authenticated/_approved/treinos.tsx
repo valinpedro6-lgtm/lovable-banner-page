@@ -18,6 +18,8 @@ import { useEngine } from "@/hooks/use-engine";
 import { MUSCLES } from "@/lib/muscles";
 import {
   adjustSets,
+  adjustLoadSets,
+  adjustReps,
   bestDay,
   exerciseFor,
   planKey,
@@ -38,7 +40,7 @@ import {
   scheduledProgramDay,
   WEEKDAYS,
 } from "@/lib/training-schedule";
-import type { Experience } from "@/lib/types";
+import type { Experience, TrainingLoad } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const DESC =
@@ -70,6 +72,7 @@ function PlansPage() {
   );
   const best = bestDay(ranked);
   const exp = app.profile.experience;
+  const trainingLoad: TrainingLoad = app.profile.trainingLoad ?? "moderado";
   const restDay = recommendation.kind === "rest" && recommendation.title === "Descanso ativo";
   const trainingDays = normalizeTrainingDays(app.profile.trainingDays);
   const weeklyPlan = app.profile.weeklyPlan ?? {};
@@ -123,6 +126,10 @@ function PlansPage() {
                 });
                 setChoosing(false);
               }}
+            />
+            <TrainingLoadPicker
+              value={trainingLoad}
+              onChange={(value) => actions.updateProfile({ trainingLoad: value })}
             />
           </div>
         )}
@@ -275,7 +282,7 @@ function PlansPage() {
             </div>
           </div>
           <MuscleChips day={best} />
-          <ExerciseList day={best} exp={exp} />
+          <ExerciseList day={best} exp={exp} load={trainingLoad} />
           {best.day.cardio && (
             <CardioRecommendation cardio={best.day.cardio} onUse={useCardioPreset} />
           )}
@@ -299,6 +306,7 @@ function PlansPage() {
               exp={exp}
               best={r.day.id === best?.day.id}
               onUseCardio={useCardioPreset}
+              load={trainingLoad}
             />
           ))}
         </ul>
@@ -351,7 +359,7 @@ function MuscleChips({ day }: { day: RankedDay }) {
   );
 }
 
-function ExerciseList({ day, exp }: { day: RankedDay; exp: Experience }) {
+function ExerciseList({ day, exp, load }: { day: RankedDay; exp: Experience; load: TrainingLoad }) {
   return (
     <ol className="mt-4 space-y-2">
       {day.day.items.map(([name, sets, reps], i) => {
@@ -368,7 +376,7 @@ function ExerciseList({ day, exp }: { day: RankedDay; exp: Experience }) {
               </span>
             )}
             <span className="num shrink-0 text-xs">
-              {adjustSets(sets, i, exp)}×{reps}
+              {adjustLoadSets(adjustSets(sets, i, exp), i, load)}×{adjustReps(reps, load)}
             </span>
           </li>
         );
@@ -383,12 +391,14 @@ function DayCard({
   exp,
   best,
   onUseCardio,
+  load,
 }: {
   r: RankedDay;
   program: Program;
   exp: Experience;
   best: boolean;
   onUseCardio: (cardio: CardioPrescription) => void;
+  load: TrainingLoad;
 }) {
   const [open, setOpen] = useState(false);
   const color = BAND_COLOR[bandFor(r.readiness)];
@@ -425,7 +435,7 @@ function DayCard({
       {open && (
         <div className="border-t border-border/60 px-4 pb-4">
           <MuscleChips day={r} />
-          <ExerciseList day={r} exp={exp} />
+          <ExerciseList day={r} exp={exp} load={load} />
         </div>
       )}
       <div className="px-4 pb-4">
@@ -520,5 +530,48 @@ export function ProgramPicker({
         );
       })}
     </ul>
+  );
+}
+
+function TrainingLoadPicker({
+  value,
+  onChange,
+}: {
+  value: TrainingLoad;
+  onChange: (value: TrainingLoad) => void;
+}) {
+  const options: { value: TrainingLoad; label: string; detail: string }[] = [
+    { value: "leve", label: "Leve", detail: "menos séries" },
+    { value: "moderado", label: "Moderado", detail: "equilibrado" },
+    { value: "pesado", label: "Pesado", detail: "mais volume" },
+  ];
+  return (
+    <div className="mt-4 border-t border-border/60 pt-4">
+      <div className="mb-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+        Como você quer treinar?
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            className={cn(
+              "rounded-xl border px-2 py-2 text-left transition-colors",
+              value === option.value
+                ? "border-primary bg-accent text-accent-foreground"
+                : "border-border text-muted-foreground hover:border-muted-foreground",
+            )}
+          >
+            <span className="block text-xs font-medium">{option.label}</span>
+            <span className="mt-0.5 block text-[9px]">{option.detail}</span>
+          </button>
+        ))}
+      </div>
+      <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
+        A divisão continua igual; mudam séries, repetições e esforço sugerido. Você pode ajustar a
+        carga real ao registrar.
+      </p>
+    </div>
   );
 }

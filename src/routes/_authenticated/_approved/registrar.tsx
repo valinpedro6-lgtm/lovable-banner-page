@@ -1,5 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, ChevronRight, Circle, ClipboardList, Minus, Plus, Trash2 } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronRight,
+  Circle,
+  ClipboardList,
+  Minus,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BodyMap } from "@/components/BodyMap";
@@ -14,7 +22,14 @@ import { toLocalInput } from "@/lib/format";
 import { MUSCLES, type MuscleId } from "@/lib/muscles";
 import type { WorkoutEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { buildEntries, lastLoads, parsePlan, planKey, type PlanDay, type Program } from "@/lib/programs";
+import {
+  buildEntries,
+  lastLoads,
+  parsePlan,
+  planKey,
+  type PlanDay,
+  type Program,
+} from "@/lib/programs";
 
 export const Route = createFileRoute("/_authenticated/_approved/registrar")({
   validateSearch: (s: Record<string, unknown>): { plano?: string } => {
@@ -26,7 +41,10 @@ export const Route = createFileRoute("/_authenticated/_approved/registrar")({
       { title: "Registrar treino · MUSCLE RECOVERY" },
       { name: "description", content: "Registre exercícios, séries, cargas e RPE em segundos." },
       { property: "og:title", content: "Registrar treino · MUSCLE RECOVERY" },
-      { property: "og:description", content: "Registre exercícios, séries, cargas e RPE em segundos." },
+      {
+        property: "og:description",
+        content: "Registre exercícios, séries, cargas e RPE em segundos.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -44,7 +62,10 @@ function RegisterBody({ plano }: { plano: string | undefined }) {
   const [mode, setMode] = useState<"full" | "quick">(plan ? "full" : "quick");
   return (
     <div>
-      <PageHeader eyebrow="Novo registro" title={mode === "quick" ? "Músculos treinados" : "Treino completo"} />
+      <PageHeader
+        eyebrow="Novo registro"
+        title={mode === "quick" ? "Músculos treinados" : "Treino completo"}
+      />
       <div className="mb-5 grid grid-cols-2 rounded-full border border-border bg-surface p-1 text-sm font-medium">
         {(
           [
@@ -74,7 +95,9 @@ function RegisterBody({ plano }: { plano: string | undefined }) {
           </span>
           <span className="flex-1">
             <span className="block text-sm font-medium">Usar um treino pronto</span>
-            <span className="block text-xs text-muted-foreground">O app indica o melhor treino para hoje</span>
+            <span className="block text-xs text-muted-foreground">
+              O app indica o melhor treino para hoje
+            </span>
           </span>
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </Link>
@@ -86,8 +109,26 @@ function RegisterBody({ plano }: { plano: string | undefined }) {
 
 /* ---------------- Quick mode (reference design) ---------------- */
 
-const FRONT_CHIPS: MuscleId[] = ["deltoides", "peitoral", "biceps", "antebracos", "abdomen", "quadriceps", "panturrilhas", "trapezio"];
-const BACK_CHIPS: MuscleId[] = ["trapezio", "deltoides", "dorsais", "triceps", "lombar", "gluteos", "posteriores", "panturrilhas"];
+const FRONT_CHIPS: MuscleId[] = [
+  "deltoides",
+  "peitoral",
+  "biceps",
+  "antebracos",
+  "abdomen",
+  "quadriceps",
+  "panturrilhas",
+  "trapezio",
+];
+const BACK_CHIPS: MuscleId[] = [
+  "trapezio",
+  "deltoides",
+  "dorsais",
+  "triceps",
+  "lombar",
+  "gluteos",
+  "posteriores",
+  "panturrilhas",
+];
 
 const INTENSITY = [
   { id: 1, label: "Leve", sets: 4, rpe: 6 },
@@ -186,7 +227,13 @@ function QuickWorkout() {
           </div>
         </div>
         <DateField value={date} onChange={setDate} />
-        <Button variant="silver" size="xl" className="w-full" disabled={!selected.length} onClick={save}>
+        <Button
+          variant="silver"
+          size="xl"
+          className="w-full"
+          disabled={!selected.length}
+          onClick={save}
+        >
           Concluir {selected.length > 0 && `· ${selected.length}`}
         </Button>
       </div>
@@ -220,7 +267,14 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
   const [date, setDate] = useState(() => toLocalInput(new Date()));
   const lastLoad = useMemo(() => lastLoads(app.workouts), [app.workouts]);
   const [entries, setEntries] = useState<Draft[]>(() =>
-    plan ? buildEntries(plan.day, app.profile.experience, lastLoad).map((e) => ({ ...e, id: uid() })) : [],
+    plan
+      ? buildEntries(
+          plan.day,
+          app.profile.experience,
+          lastLoad,
+          app.profile.trainingLoad ?? "moderado",
+        ).map((e) => ({ ...e, id: uid() }))
+      : [],
   );
   const [picker, setPicker] = useState(false);
 
@@ -262,9 +316,13 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
       {plan && (
         <div className="panel flex items-center justify-between gap-3 p-4">
           <div className="min-w-0">
-            <div className="text-[10px] uppercase tracking-[0.2em] text-primary">Treino pronto · {plan.program.name}</div>
+            <div className="text-[10px] uppercase tracking-[0.2em] text-primary">
+              Treino pronto · {plan.program.name}
+            </div>
             <div className="truncate font-display text-base font-semibold">{plan.day.name}</div>
-            <div className="text-xs text-muted-foreground">Ajuste cargas e séries como quiser antes de salvar.</div>
+            <div className="text-xs text-muted-foreground">
+              Ajuste cargas e séries como quiser antes de salvar.
+            </div>
           </div>
           <Link to="/treinos" className="shrink-0 text-xs text-primary">
             Trocar
@@ -277,7 +335,9 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
         <div key={e.id} className="panel p-4">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="num text-[10px] text-muted-foreground">#{String(idx + 1).padStart(2, "0")}</div>
+              <div className="num text-[10px] text-muted-foreground">
+                #{String(idx + 1).padStart(2, "0")}
+              </div>
               <div className="truncate font-medium">{e.name}</div>
               <div className="text-xs text-primary">{MUSCLES[e.muscle].name}</div>
             </div>
@@ -290,9 +350,28 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
             </button>
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <Stepper label="Séries" value={e.sets} min={1} max={20} onChange={(v) => update(e.id, { sets: v })} />
-            <Stepper label="Reps" value={e.reps} min={1} max={50} onChange={(v) => update(e.id, { reps: v })} />
-            <Stepper label="Carga kg" value={e.load} min={0} max={500} step={2.5} onChange={(v) => update(e.id, { load: v })} />
+            <Stepper
+              label="Séries"
+              value={e.sets}
+              min={1}
+              max={20}
+              onChange={(v) => update(e.id, { sets: v })}
+            />
+            <Stepper
+              label="Reps"
+              value={e.reps}
+              min={1}
+              max={50}
+              onChange={(v) => update(e.id, { reps: v })}
+            />
+            <Stepper
+              label="Carga kg"
+              value={e.load}
+              min={0}
+              max={500}
+              step={2.5}
+              onChange={(v) => update(e.id, { load: v })}
+            />
           </div>
           <div className="mt-3">
             <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
@@ -306,7 +385,9 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
                   onClick={() => update(e.id, { rpe: n })}
                   className={cn(
                     "num h-8 rounded-md text-xs transition-colors",
-                    n <= e.rpe ? "bg-primary text-primary-foreground" : "bg-surface-2 text-muted-foreground",
+                    n <= e.rpe
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-surface-2 text-muted-foreground",
                   )}
                   style={n <= e.rpe ? { opacity: 0.35 + (n / 10) * 0.65 } : undefined}
                 >
@@ -325,7 +406,13 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
         <Plus className="h-4 w-4" /> Adicionar exercício
       </button>
 
-      <Button variant="silver" size="xl" className="w-full" disabled={!entries.length} onClick={save}>
+      <Button
+        variant="silver"
+        size="xl"
+        className="w-full"
+        disabled={!entries.length}
+        onClick={save}
+      >
         Salvar treino
       </Button>
 
@@ -372,9 +459,15 @@ function Stepper({
   const clamp = (v: number) => Math.min(max, Math.max(min, v));
   return (
     <div className="rounded-xl bg-surface-2 p-2">
-      <div className="mb-1 text-center text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mb-1 text-center text-[10px] uppercase tracking-wider text-muted-foreground">
+        {label}
+      </div>
       <div className="flex items-center justify-between">
-        <button aria-label={`Diminuir ${label}`} onClick={() => onChange(clamp(value - step))} className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground active:bg-secondary">
+        <button
+          aria-label={`Diminuir ${label}`}
+          onClick={() => onChange(clamp(value - step))}
+          className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground active:bg-secondary"
+        >
           <Minus className="h-3.5 w-3.5" />
         </button>
         <input
@@ -386,7 +479,11 @@ function Stepper({
           }}
           className="num w-12 bg-transparent text-center text-lg font-semibold outline-none"
         />
-        <button aria-label={`Aumentar ${label}`} onClick={() => onChange(clamp(value + step))} className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground active:bg-secondary">
+        <button
+          aria-label={`Aumentar ${label}`}
+          onClick={() => onChange(clamp(value + step))}
+          className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground active:bg-secondary"
+        >
           <Plus className="h-3.5 w-3.5" />
         </button>
       </div>

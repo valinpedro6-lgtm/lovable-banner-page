@@ -24,6 +24,7 @@ export const DEFAULT_STATE: AppState = {
     weight: null,
     height: null,
     experience: "intermediario",
+    trainingLoad: "moderado",
     weeklyFrequency: 3,
     split: "ppl",
     setupComplete: false,

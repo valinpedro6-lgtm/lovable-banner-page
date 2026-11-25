@@ -48,6 +48,7 @@ export interface CheckIn {
 }
 
 export type Experience = "iniciante" | "intermediario" | "avancado";
+export type TrainingLoad = "leve" | "moderado" | "pesado";
 export type BodyGoal = "manter" | "emagrecer" | "ganhar_massa" | "ganhar_peso";
 export type ActivityLevel = "sedentario" | "leve" | "moderado" | "alto";
 export type CalculationSex = "masculino" | "feminino" | null;
@@ -70,6 +71,7 @@ export interface Profile {
   weight: number | null;
   height: number | null;
   experience: Experience;
+  trainingLoad?: TrainingLoad;
   weeklyFrequency: number;
   split: string;
   setupComplete?: boolean;

@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { MUSCLE_IDS } from "@/lib/muscles";
 import {
   adjustSets,
+  adjustLoadSets,
+  adjustReps,
   bestDay,
   exerciseFor,
   parsePlan,
@@ -61,6 +63,15 @@ describe("programs", () => {
     expect(adjustSets(4, 0, "avancado")).toBe(5);
     expect(adjustSets(3, 2, "avancado")).toBe(3);
     expect(adjustSets(4, 0, "intermediario")).toBe(4);
+  });
+
+  it("adapts planned volume to light, moderate and heavy training load", () => {
+    expect(adjustLoadSets(4, 0, "leve")).toBe(3);
+    expect(adjustLoadSets(4, 0, "moderado")).toBe(4);
+    expect(adjustLoadSets(4, 0, "pesado")).toBe(5);
+    expect(adjustReps(10, "leve")).toBe(12);
+    expect(adjustReps(10, "moderado")).toBe(10);
+    expect(adjustReps(10, "pesado")).toBe(8);
   });
 
   it("parses plan keys", () => {
