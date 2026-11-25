@@ -145,6 +145,11 @@ function RootComponent() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+    void navigator.serviceWorker.register("/sw.js").catch(() => undefined);
+  }, []);
+
   const showSplash = !hydrated || !splashDelayElapsed;
   const showOnboarding = !showSplash && !app.profile.setupComplete;
 

@@ -12,4 +12,5 @@
 - [x] Quiz e Dieta: deixar explícito que o peso informado no quiz de perfil é o mesmo peso usado pela aba Dieta e pelo progresso.
 - [x] Mapa semanal: permitir editar e salvar localmente o que será treinado em cada dia da semana, mantendo a sugestão automática como placeholder.
 - [x] Carga do treino: permitir escolher leve, moderado ou pesado na divisão e adaptar séries, repetições e RPE sem trocar a estrutura principal dos exercícios.
+- [x] Offline/PWA: registrar o service worker desde a primeira tela, cachear o shell e os assets do app e permitir reabrir as telas e dados locais sem internet após o primeiro acesso online.
 - [ ] Qualidade e entrega: validar tipagem, lint, testes e build; verificar produção depois do deploy e enviar estas novas mudanças em commit separado para `origin/main`.
