@@ -41,6 +41,12 @@ describe("cardio timer helpers", () => {
     expect(cues.every((cue) => cue.minute < 40)).toBe(true);
   });
 
+  it("uses five-minute effort blocks when the preference is moderate", () => {
+    const cues = automaticCardioCues("HIIT", 40, "moderado");
+    expect(cues.some((cue) => cue.message.includes("5 minutos"))).toBe(true);
+    expect(cues.some((cue) => cue.message.includes("Recupere por 3 minutos"))).toBe(true);
+  });
+
   it("returns only reminders crossed during a tick, including long background ticks", () => {
     expect(remindersCrossed(11 * 60 + 58, 12 * 60 + 2, reminders, new Set())).toEqual([
       reminders[0],

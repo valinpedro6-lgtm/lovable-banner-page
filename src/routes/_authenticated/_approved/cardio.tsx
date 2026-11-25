@@ -111,7 +111,6 @@ function CardioPage() {
           {CARDIO_ACTIVITY_OPTIONS.map((option) => {
             const focus = FOCUS[option.value];
             const Icon = ICONS[option.value] ?? Activity;
-            const isBike = option.value === "Bicicleta";
             return (
               <button
                 key={option.value}
@@ -129,17 +128,9 @@ function CardioPage() {
                 className="group rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-left transition hover:-translate-y-0.5 hover:border-primary/60 hover:bg-primary/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <div className="flex items-start gap-2">
-                  {isBike ? (
-                    <img
-                      src="/cardio-bike.png"
-                      alt="Ilustração de bicicleta"
-                      className="h-12 w-12 shrink-0 object-contain"
-                    />
-                  ) : (
-                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
-                      <Icon className="h-6 w-6" />
-                    </span>
-                  )}
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                    <Icon className="h-6 w-6" />
+                  </span>
                   <div className="min-w-0">
                     <h3 className="truncate text-sm font-medium">{option.label}</h3>
                     <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">

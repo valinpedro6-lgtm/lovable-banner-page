@@ -17,10 +17,12 @@ import {
   automaticCardioCues,
   CARDIO_ACTIVITY_OPTIONS,
   CARDIO_DEFAULT_MINUTES,
+  CARDIO_INTENSITY_OPTIONS,
   formatTimer,
   remindersCrossed,
   type CardioPreset,
   type CardioReminder,
+  type CardioIntensity,
 } from "@/lib/cardio-timer";
 import { actions, uid } from "@/lib/store";
 import type { CardioActivity } from "@/lib/types";
@@ -37,6 +39,7 @@ export function CardioTimer({
 }) {
   const [activity, setActivity] = useState<CardioActivity>(preset?.activity ?? "Corrida");
   const [durationMinutes, setDurationMinutes] = useState(preset?.minutes ?? 45);
+  const [intensity, setIntensity] = useState<CardioIntensity>("variado");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [running, setRunning] = useState(false);
   const [reminders, setReminders] = useState<CardioReminder[]>([]);
@@ -79,6 +82,7 @@ export function CardioTimer({
     firedRef.current.clear();
     setActivity(preset.activity);
     setDurationMinutes(preset.minutes);
+    setIntensity("variado");
     setElapsedSeconds(0);
     setRunning(false);
     setReminders(
@@ -221,11 +225,27 @@ export function CardioTimer({
       setDurationMinutes(nextDuration);
       setReminderMinute(Math.min(12, Math.max(1, nextDuration - 1)));
       setReminders(
-        automaticCardioCues(nextActivity, nextDuration).map((cue) => ({
+        automaticCardioCues(nextActivity, nextDuration, intensity).map((cue) => ({
           id: cue.id,
           minute: cue.minute,
           message: cue.message,
         })),
+      );
+    }
+  };
+
+  const changeIntensity = (nextIntensity: CardioIntensity) => {
+    setIntensity(nextIntensity);
+    if (elapsedSeconds === 0) {
+      setReminders((current) =>
+        [
+          ...automaticCardioCues(activity, durationMinutes, nextIntensity).map((cue) => ({
+            id: cue.id,
+            minute: cue.minute,
+            message: cue.message,
+          })),
+          ...current.filter((reminder) => !reminder.id.startsWith("auto-")),
+        ].sort((a, b) => a.minute - b.minute),
       );
     }
   };
@@ -377,7 +397,7 @@ export function CardioTimer({
                 setReminderMinute((minute) => Math.min(minute, Math.max(1, next - 1)));
                 setReminders((current) =>
                   [
-                    ...automaticCardioCues(activity, next).map((cue) => ({
+                    ...automaticCardioCues(activity, next, intensity).map((cue) => ({
                       id: cue.id,
                       minute: cue.minute,
                       message: cue.message,
@@ -391,6 +411,22 @@ export function CardioTimer({
           />
         </label>
       </div>
+
+      <label className="block space-y-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+        Preferência de ritmo
+        <select
+          value={intensity}
+          disabled={running || elapsedSeconds > 0}
+          onChange={(event) => changeIntensity(event.target.value as CardioIntensity)}
+          className="h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm normal-case tracking-normal text-foreground outline-none focus:border-primary disabled:opacity-60"
+        >
+          {CARDIO_INTENSITY_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label} · {option.hint}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <div className="rounded-2xl bg-surface-2 p-4 text-center">
         <div className="mb-2 flex items-center justify-center gap-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">

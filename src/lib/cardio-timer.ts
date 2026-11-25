@@ -20,6 +20,16 @@ export interface CardioCue {
   message: string;
 }
 
+export type CardioIntensity = "muito-intenso" | "intenso" | "moderado" | "leve" | "variado";
+
+export const CARDIO_INTENSITY_OPTIONS: { value: CardioIntensity; label: string; hint: string }[] = [
+  { value: "muito-intenso", label: "Muito intenso", hint: "blocos curtos e fortes" },
+  { value: "intenso", label: "Intenso", hint: "esforço alto com pausas" },
+  { value: "moderado", label: "Moderado", hint: "ritmo sustentável" },
+  { value: "leve", label: "Leve", hint: "mais recuperação" },
+  { value: "variado", label: "Variado", hint: "mistura de blocos" },
+];
+
 export const CARDIO_DEFAULT_MINUTES: Record<CardioActivity, number> = {
   Corrida: 25,
   Bicicleta: 30,
@@ -38,32 +48,65 @@ export const CARDIO_DEFAULT_MINUTES: Record<CardioActivity, number> = {
 export function automaticCardioCues(
   activity: CardioActivity,
   durationMinutes: number,
+  intensity: CardioIntensity = "variado",
 ): CardioCue[] {
   const cues: CardioCue[] = [];
   const add = (minute: number, message: string) => {
-    if (minute > 0 && minute < durationMinutes)
-      cues.push({ id: `auto-${activity}-${minute}`, minute, message });
+    if (minute <= 0 || minute >= durationMinutes) return;
+    const existing = cues.find((cue) => cue.minute === minute);
+    if (existing) {
+      existing.message = message;
+      return;
+    }
+    cues.push({ id: `auto-${activity}-${minute}`, minute, message });
   };
+
+  const blocks: Record<Exclude<CardioIntensity, "variado">, [number, number]> = {
+    "muito-intenso": [1, 1],
+    intenso: [3, 2],
+    moderado: [5, 3],
+    leve: [5, 5],
+  };
+  const [effortMinutes, recoveryMinutes] = intensity === "variado" ? [0, 0] : blocks[intensity];
 
   if (activity === "HIIT") {
     add(1, "Aqueça: ritmo leve");
-    for (let minute = 5; minute < durationMinutes - 1; minute += 3) {
-      add(minute, "Acelere forte por 1 minuto");
-      add(minute + 1, "Recupere: ritmo bem mais leve");
+    let minute = 5;
+    let cycle = 0;
+    while (minute < durationMinutes - 1) {
+      const variedEffort = [2, 3, 5, 3, 2][cycle % 5];
+      const effort = intensity === "variado" ? variedEffort : effortMinutes;
+      const recovery = intensity === "variado" ? (cycle % 2 === 0 ? 2 : 3) : recoveryMinutes;
+      add(minute, `Acelere forte por ${effort} ${effort === 1 ? "minuto" : "minutos"}`);
+      minute += effort;
+      add(minute, `Recupere por ${recovery} ${recovery === 1 ? "minuto" : "minutos"}`);
+      minute += recovery;
+      cycle += 1;
+    }
+    if (intensity === "variado" && durationMinutes > 20) {
+      add(20, "Acelere forte: bloco de referência");
     }
     add(Math.max(2, durationMinutes - 2), "Desacelere e prepare a volta à calma");
   } else if (activity === "Corda" || activity === "Escada") {
-    add(2, "Acelere por 30 segundos");
-    add(3, "Recupere em ritmo leve");
-    for (let minute = 6; minute < durationMinutes - 1; minute += 4) {
-      add(minute, "Novo bloco forte");
-      add(minute + 1, "Recupere: controle a respiração");
+    const effort = intensity === "variado" ? 2 : Math.max(1, effortMinutes);
+    const recovery = intensity === "variado" ? 2 : Math.max(1, recoveryMinutes);
+    let minute = 2;
+    while (minute < durationMinutes - 1) {
+      add(minute, `Acelere por ${effort} ${effort === 1 ? "minuto" : "minutos"}`);
+      minute += effort;
+      add(minute, `Recupere por ${recovery} ${recovery === 1 ? "minuto" : "minutos"}`);
+      minute += recovery;
     }
   } else if (activity === "Corrida" || activity === "Bicicleta" || activity === "Remo") {
     add(5, "Ajuste o ritmo: confortável e constante");
     if (durationMinutes >= 20) {
-      add(Math.floor(durationMinutes / 2), "Bloco moderado: acelere um pouco");
-      add(Math.floor(durationMinutes / 2) + 2, "Volte ao ritmo confortável");
+      const midpoint = Math.floor(durationMinutes / 2);
+      const effort = intensity === "variado" ? 5 : Math.max(1, effortMinutes);
+      add(
+        midpoint,
+        `Bloco ${intensity === "leve" ? "leve" : "forte"}: mantenha por ${effort} minutos`,
+      );
+      add(midpoint + effort, "Volte ao ritmo confortável");
     }
   }
   return cues.sort((a, b) => a.minute - b.minute);
