@@ -7,6 +7,7 @@
 - [x] Foco no Histórico: exibir uma visualização da sequência/constância dos treinos e preservar os gráficos e registros de treino existentes.
 - [x] Exercícios: ampliar variações de peso corporal e criar atalhos para encontrar peso corporal, máquinas e barra na biblioteca.
 - [x] Cardio: manter o timer somente na aba Cardio, ampliar modalidades para caminhada, natação, dança e HIIT e exibir sugestões de duração/foco e últimas sessões.
+- [x] Cardio interativo: tornar cada modalidade um card clicável com ilustração/ícone próprio, abrir o timer com preset e oferecer intervalos guiados para HIIT, corda, escada, corrida, bike e remo.
 - [x] Dieta: adicionar sugestões flexíveis de refeições e estratégia alimentar ajustadas ao peso e objetivo, sem transformar estimativas em prescrição.
 - [x] Quiz e Dieta: deixar explícito que o peso informado no quiz de perfil é o mesmo peso usado pela aba Dieta e pelo progresso.
 - [x] Mapa semanal: permitir editar e salvar localmente o que será treinado em cada dia da semana, mantendo a sugestão automática como placeholder.

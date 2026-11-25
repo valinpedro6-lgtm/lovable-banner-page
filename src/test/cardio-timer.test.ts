@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  automaticCardioCues,
+  CARDIO_DEFAULT_MINUTES,
   formatTimer,
   parseCardioPreset,
   remindersCrossed,
@@ -29,6 +31,14 @@ describe("cardio timer helpers", () => {
     });
     expect(parseCardioPreset({ activity: "Flying", minutes: 20 })).toBeUndefined();
     expect(parseCardioPreset({ activity: "Corrida", minutes: 181 })).toBeUndefined();
+  });
+
+  it("configures HIIT for 40 minutes with alternating effort and recovery cues", () => {
+    const cues = automaticCardioCues("HIIT", CARDIO_DEFAULT_MINUTES.HIIT);
+    expect(CARDIO_DEFAULT_MINUTES.HIIT).toBe(40);
+    expect(cues.some((cue) => cue.minute === 20 && cue.message.includes("Acelere"))).toBe(true);
+    expect(cues.some((cue) => cue.message.includes("Recupere"))).toBe(true);
+    expect(cues.every((cue) => cue.minute < 40)).toBe(true);
   });
 
   it("returns only reminders crossed during a tick, including long background ticks", () => {

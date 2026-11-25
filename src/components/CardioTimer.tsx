@@ -14,7 +14,9 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
+  automaticCardioCues,
   CARDIO_ACTIVITY_OPTIONS,
+  CARDIO_DEFAULT_MINUTES,
   formatTimer,
   remindersCrossed,
   type CardioPreset,
@@ -26,7 +28,13 @@ import { cn } from "@/lib/utils";
 
 type NotificationState = NotificationPermission | "unsupported";
 
-export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undefined; visible: boolean }) {
+export function CardioTimer({
+  preset,
+  visible,
+}: {
+  preset?: CardioPreset | undefined;
+  visible: boolean;
+}) {
   const [activity, setActivity] = useState<CardioActivity>(preset?.activity ?? "Corrida");
   const [durationMinutes, setDurationMinutes] = useState(preset?.minutes ?? 45);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -73,7 +81,13 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
     setDurationMinutes(preset.minutes);
     setElapsedSeconds(0);
     setRunning(false);
-    setReminders([]);
+    setReminders(
+      automaticCardioCues(preset.activity, preset.minutes).map((cue) => ({
+        id: cue.id,
+        minute: cue.minute,
+        message: cue.message,
+      })),
+    );
     setReminderMinute(Math.min(12, Math.max(1, preset.minutes - 1)));
     setSaved(false);
   }, [preset]);
@@ -200,6 +214,26 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
     setSaved(false);
   };
 
+  const changeActivity = (nextActivity: CardioActivity) => {
+    setActivity(nextActivity);
+    if (elapsedSeconds === 0) {
+      const nextDuration = CARDIO_DEFAULT_MINUTES[nextActivity];
+      setDurationMinutes(nextDuration);
+      setReminderMinute(Math.min(12, Math.max(1, nextDuration - 1)));
+      setReminders(
+        automaticCardioCues(nextActivity, nextDuration).map((cue) => ({
+          id: cue.id,
+          minute: cue.minute,
+          message: cue.message,
+        })),
+      );
+    }
+  };
+
+  const currentCue = [...reminders]
+    .filter((reminder) => reminder.id.startsWith("auto-") && reminder.minute * 60 <= elapsedSeconds)
+    .sort((a, b) => b.minute - a.minute)[0];
+
   const addReminder = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const message = reminderMessage.trim();
@@ -316,7 +350,7 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
           <select
             value={activity}
             disabled={running}
-            onChange={(event) => setActivity(event.target.value as CardioActivity)}
+            onChange={(event) => changeActivity(event.target.value as CardioActivity)}
             className="h-11 w-full rounded-xl border border-border bg-surface px-3 text-sm normal-case tracking-normal text-foreground outline-none focus:border-primary disabled:opacity-60"
           >
             {CARDIO_ACTIVITY_OPTIONS.map((option) => (
@@ -341,6 +375,16 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
                 const next = Math.min(180, Math.max(1, Math.floor(value)));
                 setDurationMinutes(next);
                 setReminderMinute((minute) => Math.min(minute, Math.max(1, next - 1)));
+                setReminders((current) =>
+                  [
+                    ...automaticCardioCues(activity, next).map((cue) => ({
+                      id: cue.id,
+                      minute: cue.minute,
+                      message: cue.message,
+                    })),
+                    ...current.filter((reminder) => !reminder.id.startsWith("auto-")),
+                  ].sort((a, b) => a.minute - b.minute),
+                );
               }
             }}
             className="num h-11 w-full rounded-xl border border-border bg-surface px-3 text-base text-foreground outline-none focus:border-primary disabled:opacity-60"
@@ -372,6 +416,14 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
         <div className="mt-2 text-[11px] text-muted-foreground">
           Decorrido {formatTimer(elapsedSeconds)} de {formatTimer(durationSeconds)}
         </div>
+        {currentCue && (
+          <div className="mt-3 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-left">
+            <div className="text-[10px] uppercase tracking-wider text-primary">
+              Instrução atual · minuto {currentCue.minute}
+            </div>
+            <div className="mt-1 text-xs font-medium text-foreground">{currentCue.message}</div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-[1fr_auto] gap-2">
@@ -395,7 +447,7 @@ export function CardioTimer({ preset, visible }: { preset?: CardioPreset | undef
               <Bell className="h-4 w-4 text-primary" /> Lembretes do treino
             </div>
             <p className="mt-1 text-[11px] text-muted-foreground">
-              Ex.: minuto 12 · beber água ou ajustar o ritmo.
+              Os intervalos guiados aparecem automaticamente; você também pode adicionar os seus.
             </p>
           </div>
         </div>

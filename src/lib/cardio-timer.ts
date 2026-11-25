@@ -14,6 +14,61 @@ export const CARDIO_ACTIVITY_OPTIONS: { value: CardioActivity; label: string }[]
   { value: "HIIT", label: "HIIT" },
 ];
 
+export interface CardioCue {
+  id: string;
+  minute: number;
+  message: string;
+}
+
+export const CARDIO_DEFAULT_MINUTES: Record<CardioActivity, number> = {
+  Corrida: 25,
+  Bicicleta: 30,
+  Caminhada: 35,
+  "Caminhada inclinada": 25,
+  Elíptico: 25,
+  Remo: 20,
+  Corda: 12,
+  Escada: 15,
+  Natação: 30,
+  Dança: 30,
+  HIIT: 40,
+};
+
+/** Builds practical interval cues for activities that alternate effort and recovery. */
+export function automaticCardioCues(
+  activity: CardioActivity,
+  durationMinutes: number,
+): CardioCue[] {
+  const cues: CardioCue[] = [];
+  const add = (minute: number, message: string) => {
+    if (minute > 0 && minute < durationMinutes)
+      cues.push({ id: `auto-${activity}-${minute}`, minute, message });
+  };
+
+  if (activity === "HIIT") {
+    add(1, "Aqueça: ritmo leve");
+    for (let minute = 5; minute < durationMinutes - 1; minute += 3) {
+      add(minute, "Acelere forte por 1 minuto");
+      add(minute + 1, "Recupere: ritmo bem mais leve");
+    }
+    add(Math.max(2, durationMinutes - 2), "Desacelere e prepare a volta à calma");
+  } else if (activity === "Corda" || activity === "Escada") {
+    add(2, "Acelere por 30 segundos");
+    add(3, "Recupere em ritmo leve");
+    for (let minute = 6; minute < durationMinutes - 1; minute += 4) {
+      add(minute, "Novo bloco forte");
+      add(minute + 1, "Recupere: controle a respiração");
+    }
+  } else if (activity === "Corrida" || activity === "Bicicleta" || activity === "Remo") {
+    add(5, "Ajuste o ritmo: confortável e constante");
+    if (durationMinutes >= 20) {
+      add(Math.floor(durationMinutes / 2), "Bloco moderado: acelere um pouco");
+      add(Math.floor(durationMinutes / 2) + 2, "Volte ao ritmo confortável");
+    }
+  }
+  return cues.sort((a, b) => a.minute - b.minute);
+}
+
 export interface CardioPreset {
   activity: CardioActivity;
   minutes: number;
