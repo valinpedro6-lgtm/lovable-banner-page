@@ -699,7 +699,8 @@ export function lastLoads(workouts: Workout[]): Map<string, number> {
   const map = new Map<string, number>();
   const sorted = [...workouts].sort((a, b) => a.date.localeCompare(b.date));
   for (const w of sorted)
-    for (const e of w.entries) if (e.exerciseId) map.set(e.exerciseId, e.load);
+    for (const e of w.entries)
+      if (e.exerciseId) map.set(e.exerciseId, e.setDetails?.at(-1)?.load ?? e.load);
   return map;
 }
 

@@ -20,7 +20,7 @@ import { useAppState, actions, uid } from "@/lib/store";
 import type { Exercise } from "@/lib/exercises";
 import { toLocalInput } from "@/lib/format";
 import { MUSCLES, type MuscleId } from "@/lib/muscles";
-import type { WorkoutEntry } from "@/lib/types";
+import type { WorkoutEntry, WorkoutSet } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
   buildEntries,
@@ -261,6 +261,25 @@ interface Draft extends WorkoutEntry {
   name: string;
 }
 
+function makeSetDetails(sets: number, reps: number, load: number, rpe: number): WorkoutSet[] {
+  return Array.from({ length: sets }, () => ({ reps, load, rpe }));
+}
+
+function resizeSetDetails(details: WorkoutSet[], count: number): WorkoutSet[] {
+  const fallback = details.at(-1) ?? { reps: 10, load: 0, rpe: 8 };
+  return Array.from({ length: count }, (_, index) => details[index] ?? { ...fallback });
+}
+
+function summarizeSets(details: WorkoutSet[]) {
+  const last = details.at(-1) ?? { reps: 10, load: 0, rpe: 8 };
+  return {
+    sets: details.length,
+    reps: Math.round(details.reduce((sum, set) => sum + set.reps, 0) / details.length),
+    load: last.load,
+    rpe: Math.round(details.reduce((sum, set) => sum + set.rpe, 0) / details.length),
+  };
+}
+
 function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null }) {
   const navigate = useNavigate();
   const app = useAppState();
@@ -291,13 +310,35 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
         reps: 10,
         load: lastLoad.get(ex.id) ?? 0,
         rpe: 8,
+        setDetails: makeSetDetails(3, 10, lastLoad.get(ex.id) ?? 0, 8),
       },
     ]);
     setPicker(false);
   };
 
-  const update = (id: string, patch: Partial<Draft>) =>
-    setEntries((s) => s.map((e) => (e.id === id ? { ...e, ...patch } : e)));
+  const updateSets = (id: string, count: number) =>
+    setEntries((current) =>
+      current.map((entry) => {
+        if (entry.id !== id) return entry;
+        const details = resizeSetDetails(
+          entry.setDetails ?? makeSetDetails(entry.sets, entry.reps, entry.load, entry.rpe),
+          count,
+        );
+        return { ...entry, ...summarizeSets(details), setDetails: details };
+      }),
+    );
+
+  const updateSet = (id: string, index: number, patch: Partial<WorkoutSet>) =>
+    setEntries((current) =>
+      current.map((entry) => {
+        if (entry.id !== id) return entry;
+        const details = resizeSetDetails(
+          entry.setDetails ?? makeSetDetails(entry.sets, entry.reps, entry.load, entry.rpe),
+          entry.sets,
+        ).map((set, setIndex) => (setIndex === index ? { ...set, ...patch } : set));
+        return { ...entry, ...summarizeSets(details), setDetails: details };
+      }),
+    );
 
   const save = () => {
     actions.addWorkout({
@@ -305,7 +346,10 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
       kind: "full",
       date: new Date(date).toISOString(),
       ...(plan ? { planId: planKey(plan.program, plan.day) } : {}),
-      entries: entries.map(({ name: _n, ...e }) => e),
+      entries: entries.map(({ name: _n, ...e }) => ({
+        ...e,
+        ...summarizeSets(e.setDetails ?? makeSetDetails(e.sets, e.reps, e.load, e.rpe)),
+      })),
     });
     toast.success("Treino salvo", { description: `${entries.length} exercícios registrados.` });
     navigate({ to: "/" });
@@ -349,52 +393,69 @@ function FullWorkout({ plan }: { plan: { program: Program; day: PlanDay } | null
               <Trash2 className="h-4 w-4" />
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="mb-3 grid grid-cols-3 gap-2">
             <Stepper
               label="Séries"
               value={e.sets}
               min={1}
               max={20}
-              onChange={(v) => update(e.id, { sets: v })}
+              onChange={(v) => updateSets(e.id, v)}
             />
-            <Stepper
-              label="Reps"
-              value={e.reps}
-              min={1}
-              max={50}
-              onChange={(v) => update(e.id, { reps: v })}
-            />
-            <Stepper
-              label="Carga kg"
-              value={e.load}
-              min={0}
-              max={500}
-              step={2.5}
-              onChange={(v) => update(e.id, { load: v })}
-            />
+            <div className="col-span-2 self-center text-xs text-muted-foreground">
+              Cada série pode ter carga, repetições e intensidade diferentes.
+            </div>
           </div>
-          <div className="mt-3">
-            <div className="mb-1.5 flex justify-between text-[11px] text-muted-foreground">
-              <span>Intensidade percebida</span>
-              <span className="num text-foreground">RPE {e.rpe}</span>
-            </div>
-            <div className="grid grid-cols-10 gap-1">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                <button
-                  key={n}
-                  onClick={() => update(e.id, { rpe: n })}
-                  className={cn(
-                    "num h-8 rounded-md text-xs transition-colors",
-                    n <= e.rpe
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-surface-2 text-muted-foreground",
-                  )}
-                  style={n <= e.rpe ? { opacity: 0.35 + (n / 10) * 0.65 } : undefined}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
+          <div className="space-y-3">
+            {resizeSetDetails(
+              e.setDetails ?? makeSetDetails(e.sets, e.reps, e.load, e.rpe),
+              e.sets,
+            ).map((set, setIndex) => (
+              <div key={setIndex} className="rounded-2xl border border-border bg-surface-2 p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <div className="text-sm font-semibold">Série {setIndex + 1}</div>
+                  <div className="num text-[11px] text-muted-foreground">RPE {set.rpe}</div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Stepper
+                    label="Reps"
+                    value={set.reps}
+                    min={1}
+                    max={50}
+                    onChange={(v) => updateSet(e.id, setIndex, { reps: v })}
+                  />
+                  <Stepper
+                    label="Carga kg"
+                    value={set.load}
+                    min={0}
+                    max={500}
+                    step={2.5}
+                    onChange={(v) => updateSet(e.id, setIndex, { load: v })}
+                  />
+                </div>
+                <div className="mt-3">
+                  <div className="mb-1.5 text-[11px] text-muted-foreground">
+                    Intensidade percebida
+                  </div>
+                  <div className="grid grid-cols-10 gap-1">
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => updateSet(e.id, setIndex, { rpe: n })}
+                        className={cn(
+                          "num h-8 rounded-md text-xs transition-colors",
+                          n <= set.rpe
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-surface text-muted-foreground",
+                        )}
+                        style={n <= set.rpe ? { opacity: 0.35 + (n / 10) * 0.65 } : undefined}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       ))}

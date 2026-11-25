@@ -13,6 +13,12 @@ export type CardioActivity =
   | "Dança"
   | "HIIT";
 
+export interface WorkoutSet {
+  reps: number;
+  load: number;
+  rpe: number;
+}
+
 export interface WorkoutEntry {
   id: string;
   /** Exercise id from the library; absent for quick workouts. */
@@ -23,6 +29,8 @@ export interface WorkoutEntry {
   reps: number;
   load: number;
   rpe: number;
+  /** Valores efetivamente registrados em cada série. Registros antigos podem omitir este campo. */
+  setDetails?: WorkoutSet[];
 }
 
 export interface Workout {
