@@ -36,6 +36,7 @@ export const DEFAULT_STATE: AppState = {
     measurements: emptyMeasurements,
     trainingDays: [1, 3, 5],
     trainingScheduleStart: null,
+    weeklyPlan: {},
   },
   notifications: {
     reminder: false,

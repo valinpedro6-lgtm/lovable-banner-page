@@ -4,7 +4,7 @@
 
 Continuar no app React/TypeScript com TanStack Start, mantendo os dados exclusivamente no `localStorage` já existente. Estender o modelo do perfil de forma compatível com instalações antigas; registrar histórico de peso e ingestão diária de água no mesmo estado local. Isolar fórmulas em módulos puros para testes. O primeiro acesso abre um onboarding curto com dados básicos, objetivo, atividade e medidas opcionais. A aba Dieta mostra estimativas, hidratação e sugestões flexíveis de refeições ajustadas ao peso/objetivo, sem cardápio obrigatório ou prescrição. O Histórico reúne progresso do peso por etapas de até 5 kg e constância de treinos. A aba Cardio concentra o timer e as opções de modalidade; a tela inicial não duplica o timer.
 
-A navegação inferior mantém cinco posições visuais, com o botão “+” no centro; Dieta ocupa o lado esquerdo e Cardio o direito. Permanecem acessíveis Início, Exercícios e Histórico pelo conteúdo e links do app, e Cardio continua como rota própria.
+A navegação inferior mantém cinco posições visuais, com o botão “+” no centro; Dieta ocupa o lado esquerdo e Cardio o direito. Permanecem acessíveis Início, Exercícios e Histórico pelo conteúdo e links do app, e Cardio continua como rota própria. O quiz de perfil é a fonte do peso usado nas referências da Dieta; Treinos exibe um mapa semanal editável, com sugestão automática quando não houver texto personalizado.
 
 **Design Movement:** interface fitness premium de grafite e prata, com superfícies translúcidas inspiradas no glass do iPhone, sem reproduzir marca da referência.
 
@@ -35,7 +35,7 @@ A navegação inferior mantém cinco posições visuais, com o botão “+” no
 - `src/components/OnboardingWizard.tsx`: criação do perfil inicial.
 - `src/routes/_authenticated/_approved/dieta.tsx`: estimativas e registro de hidratação.
 - `src/routes/_authenticated/_approved/historico.tsx`: etapa corporal e gráfico de foco.
-- `src/components/AppNav.tsx` e `src/routes/__root.tsx`: navegação e gate de primeiro uso.
+- `src/components/AppNav.tsx`, `src/routes/__root.tsx` e `src/routes/_authenticated/_approved/treinos.tsx`: navegação, gate de primeiro uso e mapa semanal editável.
 
 ## Limites
 

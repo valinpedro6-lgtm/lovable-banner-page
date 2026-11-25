@@ -6,6 +6,7 @@ import {
   Dumbbell,
   HeartPulse,
   Moon,
+  Pencil,
   Repeat,
   Zap,
 } from "lucide-react";
@@ -40,7 +41,8 @@ import {
 import type { Experience } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const DESC = "Escolha sua divisão de treino e pegue o treino que o app indica para hoje, já montado.";
+const DESC =
+  "Escolha sua divisão de treino e pegue o treino que o app indica para hoje, já montado.";
 
 export const Route = createFileRoute("/_authenticated/_approved/treinos")({
   head: () => ({
@@ -61,21 +63,25 @@ function PlansPage() {
   const program = programFor(app.profile.split);
   const navigate = useNavigate();
   const [choosing, setChoosing] = useState(false);
-  const ranked = useMemo(() => rankDays(program, states, workouts, now), [program, states, workouts, now]);
+  const [editingMap, setEditingMap] = useState(false);
+  const ranked = useMemo(
+    () => rankDays(program, states, workouts, now),
+    [program, states, workouts, now],
+  );
   const best = bestDay(ranked);
   const exp = app.profile.experience;
   const restDay = recommendation.kind === "rest" && recommendation.title === "Descanso ativo";
   const trainingDays = normalizeTrainingDays(app.profile.trainingDays);
-  const scheduleStart = app.profile.trainingScheduleStart || scheduleAnchorDate(trainingDays, new Date(now));
+  const weeklyPlan = app.profile.weeklyPlan ?? {};
+  const scheduleStart =
+    app.profile.trainingScheduleStart || scheduleAnchorDate(trainingDays, new Date(now));
   const currentDate = new Date(now);
-  const calendarReference = scheduleStart > localDateKey(currentDate)
-    ? new Date(`${scheduleStart}T00:00:00`)
-    : currentDate;
+  const calendarReference =
+    scheduleStart > localDateKey(currentDate) ? new Date(`${scheduleStart}T00:00:00`) : currentDate;
   const useCardioPreset = (cardio: CardioPrescription) => {
     void navigate({
-      to: "/",
+      to: "/cardio",
       search: { activity: cardio.activity, minutes: cardio.minutes, nonce: Date.now() },
-      hash: "cardio-timer",
     });
   };
 
@@ -85,19 +91,25 @@ function PlansPage() {
 
       {/* Current split */}
       <section className="panel p-4 animate-rise">
-        <button onClick={() => setChoosing((c) => !c)} className="flex w-full items-center gap-3 text-left">
+        <button
+          onClick={() => setChoosing((c) => !c)}
+          className="flex w-full items-center gap-3 text-left"
+        >
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2 text-primary">
             <Repeat className="h-5 w-5" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Sua divisão</span>
+            <span className="block text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              Sua divisão
+            </span>
             <span className="block truncate font-medium">{program.name}</span>
             <span className="block text-xs text-muted-foreground">
               {program.days.length} treinos · {program.freq}
             </span>
           </span>
           <span className="flex items-center gap-1 text-xs text-primary">
-            Trocar <ChevronDown className={cn("h-4 w-4 transition-transform", choosing && "rotate-180")} />
+            Trocar{" "}
+            <ChevronDown className={cn("h-4 w-4 transition-transform", choosing && "rotate-180")} />
           </span>
         </button>
         {choosing && (
@@ -105,7 +117,10 @@ function PlansPage() {
             <ProgramPicker
               value={program.id}
               onChange={(id) => {
-                actions.updateProfile({ split: id, trainingScheduleStart: scheduleAnchorDate(trainingDays, new Date(now)) });
+                actions.updateProfile({
+                  split: id,
+                  trainingScheduleStart: scheduleAnchorDate(trainingDays, new Date(now)),
+                });
                 setChoosing(false);
               }}
             />
@@ -121,7 +136,8 @@ function PlansPage() {
           <div>
             <div className="text-sm font-medium">Agenda semanal</div>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Na divisão Livre, o app escolhe o treino pela sua recuperação. Escolha uma divisão fixa para organizar os dias da semana.
+              Na divisão Livre, o app escolhe o treino pela sua recuperação. Escolha uma divisão
+              fixa para organizar os dias da semana.
             </p>
           </div>
         </section>
@@ -131,12 +147,20 @@ function PlansPage() {
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2 text-primary">
               <CalendarDays className="h-5 w-5" />
             </span>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="text-sm font-medium">Agenda semanal</div>
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                Marque seus dias. O primeiro dia marcado recebe a primeira sessão da divisão; depois a sequência continua automaticamente.
+                Marque seus dias. O app sugere uma sequência, mas você pode escrever exatamente o
+                que vai treinar em cada dia.
               </p>
             </div>
+            <button
+              type="button"
+              onClick={() => setEditingMap((current) => !current)}
+              className="flex shrink-0 items-center gap-1 rounded-full border border-border px-2.5 py-1.5 text-[10px] text-primary"
+            >
+              <Pencil className="h-3 w-3" /> {editingMap ? "Concluir" : "Editar mapa"}
+            </button>
           </div>
 
           <div className="mt-4 grid grid-cols-4 gap-2">
@@ -191,9 +215,33 @@ function PlansPage() {
                   <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                     {weekday.label}
                   </div>
-                  <div className={cn("mt-1 truncate text-xs", day ? "text-foreground" : "text-muted-foreground")}>
-                    {day?.name ?? "Descanso"}
-                  </div>
+                  {editingMap ? (
+                    <input
+                      value={weeklyPlan[String(weekday.value)] ?? ""}
+                      onChange={(event) =>
+                        actions.updateProfile({
+                          weeklyPlan: {
+                            ...weeklyPlan,
+                            [weekday.value]: event.target.value,
+                          },
+                        })
+                      }
+                      placeholder={day?.name ?? "Descanso"}
+                      aria-label={`Treino de ${weekday.label}`}
+                      className="mt-1 h-8 w-full rounded-lg border border-border bg-background/50 px-2 text-xs outline-none placeholder:text-muted-foreground focus:border-primary"
+                    />
+                  ) : (
+                    <div
+                      className={cn(
+                        "mt-1 truncate text-xs",
+                        weeklyPlan[String(weekday.value)] || day
+                          ? "text-foreground"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {weeklyPlan[String(weekday.value)] || day?.name || "Descanso"}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -216,7 +264,9 @@ function PlansPage() {
           <div className="flex items-center gap-4">
             <RecoveryRing pct={best.readiness} size={96} stroke={8} label="Prontidão" />
             <div className="min-w-0 flex-1">
-              <div className="font-display text-xl font-semibold leading-tight">{best.day.name}</div>
+              <div className="font-display text-xl font-semibold leading-tight">
+                {best.day.name}
+              </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {restDay
                   ? "Você relatou muita fadiga. Se for treinar mesmo assim, este é o mais leve pro seu corpo."
@@ -288,7 +338,9 @@ function MuscleChips({ day }: { day: RankedDay }) {
             key={m}
             className={cn(
               "rounded-full border px-2.5 py-0.5 text-[11px]",
-              tired ? "border-rec-mid/60 text-rec-mid" : "border-primary/50 bg-accent text-accent-foreground",
+              tired
+                ? "border-rec-mid/60 text-rec-mid"
+                : "border-primary/50 bg-accent text-accent-foreground",
             )}
           >
             {MUSCLES[m].short}
@@ -306,9 +358,15 @@ function ExerciseList({ day, exp }: { day: RankedDay; exp: Experience }) {
         const ex = exerciseFor(name);
         return (
           <li key={name} className="flex items-center gap-3 text-sm">
-            <span className="num w-5 text-[11px] text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
+            <span className="num w-5 text-[11px] text-muted-foreground">
+              {String(i + 1).padStart(2, "0")}
+            </span>
             <span className="min-w-0 flex-1 truncate">{name}</span>
-            {ex && <span className="hidden text-[10px] text-muted-foreground sm:inline">{ex.equipment}</span>}
+            {ex && (
+              <span className="hidden text-[10px] text-muted-foreground sm:inline">
+                {ex.equipment}
+              </span>
+            )}
             <span className="num shrink-0 text-xs">
               {adjustSets(sets, i, exp)}×{reps}
             </span>
@@ -336,7 +394,10 @@ function DayCard({
   const color = BAND_COLOR[bandFor(r.readiness)];
   return (
     <li className={cn("panel overflow-hidden", best && "border-primary/50")}>
-      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-4 p-4 text-left">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-4 p-4 text-left"
+      >
         <div className="num w-12 shrink-0 text-2xl font-semibold" style={{ color }}>
           {r.readiness}
           <span className="text-xs text-muted-foreground">%</span>
@@ -354,7 +415,12 @@ function DayCard({
             {r.day.items.length} exercícios · {r.muscles.map((m) => MUSCLES[m].short).join(", ")}
           </div>
         </div>
-        <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} />
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+            open && "rotate-180",
+          )}
+        />
       </button>
       {open && (
         <div className="border-t border-border/60 px-4 pb-4">
@@ -409,7 +475,13 @@ function CardioRecommendation({
   );
 }
 
-export function ProgramPicker({ value, onChange }: { value: string; onChange: (id: string) => void }) {
+export function ProgramPicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (id: string) => void;
+}) {
   return (
     <ul className="grid gap-2">
       {PROGRAMS.map((p) => {
@@ -434,7 +506,9 @@ export function ProgramPicker({ value, onChange }: { value: string; onChange: (i
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-center gap-x-2">
                   <span className="text-sm font-medium">{p.name}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{p.level}</span>
+                  <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {p.level}
+                  </span>
                 </span>
                 <span className="block text-xs text-muted-foreground">{p.description}</span>
                 <span className="num mt-0.5 block text-[11px] text-primary">

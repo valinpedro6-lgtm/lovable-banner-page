@@ -58,6 +58,17 @@ function DietPage() {
             <p className="text-xs text-muted-foreground">Objetivo: {goalLabel(profile.goal)}</p>
           </div>
         </div>
+        <div className="mb-4 rounded-2xl border border-primary/20 bg-accent/20 px-4 py-3">
+          <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+            Peso usado pelo quiz/perfil
+          </p>
+          <p className="num mt-1 text-lg font-semibold">
+            {profile.weight !== null ? `${profile.weight} kg` : "Informe seu peso no quiz"}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground">
+            Para atualizar estas referências, edite o perfil e salve novamente o quiz.
+          </p>
+        </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">

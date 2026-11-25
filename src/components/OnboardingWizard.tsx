@@ -117,7 +117,7 @@ export function OnboardingWizard() {
         </div>
         <div>
           <p className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-            Muscle Recovery · perfil inicial
+            Muscle Recovery · quiz de perfil
           </p>
           <h1 className="font-display text-xl font-semibold">Vamos montar seu perfil</h1>
         </div>
@@ -171,6 +171,9 @@ export function OnboardingWizard() {
                   onChange={(event) => set("weight", event.target.value)}
                   placeholder="70"
                 />
+                <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
+                  Este peso será usado na aba Dieta, nas referências de proteína e no seu progresso.
+                </p>
               </Field>
               <Field label="Altura" unit="cm">
                 <input

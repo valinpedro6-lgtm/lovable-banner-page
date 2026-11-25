@@ -84,6 +84,8 @@ export interface Profile {
   trainingDays?: number[];
   /** Local YYYY-MM-DD for the first active day of the current training cycle. */
   trainingScheduleStart?: string | null;
+  /** Optional user labels for the weekly training map, keyed by JS weekday (0–6). */
+  weeklyPlan?: Record<string, string>;
 }
 
 export interface NotificationPrefs {
