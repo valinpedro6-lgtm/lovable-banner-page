@@ -1,4 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { CalendarDays, Check } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { toast } from "sonner";
 import {
   ReferenceLine,
   ResponsiveContainer,
@@ -10,6 +13,8 @@ import {
 } from "recharts";
 import { goalMilestones, goalProgress } from "@/lib/fitness-estimates";
 import type { Profile, WeightLog } from "@/lib/types";
+import { actions } from "@/lib/store";
+import { Button } from "@/components/ui/button";
 
 const tick = { fill: "var(--muted-foreground)", fontSize: 10, fontFamily: "var(--font-mono)" };
 
@@ -24,22 +29,25 @@ export function BodyGoalChart({
   const target = profile.targetWeight;
   if (!current || profile.goal === "manter" || !target) {
     return (
-      <section className="panel space-y-3 p-5 animate-rise">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Meta corporal
+      <div className="space-y-3">
+        <WeightCalendar weightHistory={weightHistory} currentWeight={current} />
+        <section className="panel space-y-3 p-5 animate-rise">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+              Meta corporal
+            </p>
+            <h2 className="mt-1 font-display text-lg font-semibold">Evolução por etapas</h2>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {profile.goal === "manter"
+              ? "Seu objetivo atual é manter o peso. Se mudar de meta, o histórico mostra o caminho em passos de até 5 kg."
+              : "Defina um peso-meta no seu perfil para acompanhar uma etapa de cada vez."}
           </p>
-          <h2 className="mt-1 font-display text-lg font-semibold">Evolução por etapas</h2>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          {profile.goal === "manter"
-            ? "Seu objetivo atual é manter o peso. Se mudar de meta, o histórico mostra o caminho em passos de até 5 kg."
-            : "Defina um peso-meta no seu perfil para acompanhar uma etapa de cada vez."}
-        </p>
-        <Link to="/perfil" className="inline-flex text-xs font-medium text-primary">
-          Editar perfil →
-        </Link>
-      </section>
+          <Link to="/perfil" className="inline-flex text-xs font-medium text-primary">
+            Editar perfil →
+          </Link>
+        </section>
+      </div>
     );
   }
 
@@ -65,6 +73,7 @@ export function BodyGoalChart({
 
   return (
     <section className="panel space-y-4 p-5 animate-rise">
+      <WeightCalendar weightHistory={weightHistory} currentWeight={current} />
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
@@ -160,6 +169,99 @@ export function BodyGoalChart({
           objetivo.
         </p>
       </div>
+    </section>
+  );
+}
+
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function WeightCalendar({
+  weightHistory,
+  currentWeight,
+}: {
+  weightHistory: WeightLog[];
+  currentWeight: number | null;
+}) {
+  const [date, setDate] = useState(localDateKey());
+  const [weight, setWeight] = useState(currentWeight ? String(currentWeight) : "");
+  const recent = [...weightHistory].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4);
+
+  const save = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = Number(weight.replace(",", "."));
+    if (!date || !Number.isFinite(value) || value < 30 || value > 300) {
+      toast.error("Informe uma data e um peso entre 30 e 300 kg.");
+      return;
+    }
+    actions.recordWeight(date, value);
+    toast.success("Peso registrado", {
+      description: "O gráfico e o progresso da meta foram atualizados.",
+    });
+  };
+
+  return (
+    <section className="panel space-y-3 p-5 animate-rise">
+      <div className="flex items-start gap-3">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface-2 text-primary">
+          <CalendarDays className="h-5 w-5" />
+        </span>
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            Calendário de peso
+          </p>
+          <h2 className="mt-1 font-display text-lg font-semibold">Registre quando quiser</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Pode ser hoje, a cada dois dias ou em qualquer data. Cada registro entra no gráfico.
+          </p>
+        </div>
+      </div>
+      <form onSubmit={save} className="grid grid-cols-[1fr_96px_auto] items-end gap-2">
+        <label className="space-y-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+          Data
+          <input
+            type="date"
+            value={date}
+            max={localDateKey()}
+            onChange={(event) => setDate(event.target.value)}
+            className="h-10 w-full rounded-xl border border-border bg-surface px-2 text-sm text-foreground outline-none focus:border-primary"
+          />
+        </label>
+        <label className="space-y-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+          Peso · kg
+          <input
+            type="text"
+            inputMode="decimal"
+            value={weight}
+            onChange={(event) => setWeight(event.target.value)}
+            placeholder="75,5"
+            className="num h-10 w-full rounded-xl border border-border bg-surface px-2 text-sm text-foreground outline-none focus:border-primary"
+          />
+        </label>
+        <Button type="submit" variant="silver" size="icon" aria-label="Salvar peso">
+          <Check className="h-4 w-4" />
+        </Button>
+      </form>
+      {recent.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {recent.map((entry) => (
+            <span
+              key={entry.date}
+              className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] text-muted-foreground"
+            >
+              {new Date(`${entry.date}T12:00:00`).toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "short",
+              })}{" "}
+              · {entry.weight.toLocaleString("pt-BR")} kg
+            </span>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

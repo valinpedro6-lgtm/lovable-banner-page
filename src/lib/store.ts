@@ -61,8 +61,7 @@ function localDateKey(date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-function upsertWeightLog(history: WeightLog[], weight: number): WeightLog[] {
-  const date = localDateKey();
+function upsertWeightLog(history: WeightLog[], date: string, weight: number): WeightLog[] {
   const existing = history.findIndex((entry) => entry.date === date);
   if (existing >= 0) {
     const next = [...history];
@@ -167,8 +166,25 @@ export const actions = {
         profile,
         weightHistory:
           weightChanged || needsInitialBaseline
-            ? upsertWeightLog(current.weightHistory, weight as number)
+            ? upsertWeightLog(current.weightHistory, localDateKey(), weight as number)
             : current.weightHistory,
+      };
+    });
+  },
+  recordWeight(date: string, weight: number) {
+    const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(date);
+    const isValidWeight = Number.isFinite(weight) && weight >= 30 && weight <= 300;
+    if (!isValidDate || !isValidWeight) return;
+    setState((current) => {
+      const history = upsertWeightLog(current.weightHistory, date, weight);
+      const latest = [...history].sort((a, b) => a.date.localeCompare(b.date)).at(-1);
+      return {
+        ...current,
+        profile:
+          latest && latest.date >= localDateKey()
+            ? { ...current.profile, weight: latest.weight }
+            : current.profile,
+        weightHistory: history,
       };
     });
   },
