@@ -2,7 +2,7 @@
 
 ## Implementação e desenho
 
-Continuar no app React/TypeScript com TanStack Start, mantendo os dados exclusivamente no `localStorage` já existente. Estender o modelo do perfil de forma compatível com instalações antigas; registrar histórico de peso e ingestão diária de água no mesmo estado local. Isolar fórmulas em módulos puros para testes. O primeiro acesso abre um onboarding curto com dados básicos, objetivo, atividade e medidas opcionais. A aba Dieta mostra apenas estimativas e hidratação, sem cardápio ou prescrição. O Histórico reúne progresso do peso por etapas de até 5 kg e constância de treinos.
+Continuar no app React/TypeScript com TanStack Start, mantendo os dados exclusivamente no `localStorage` já existente. Estender o modelo do perfil de forma compatível com instalações antigas; registrar histórico de peso e ingestão diária de água no mesmo estado local. Isolar fórmulas em módulos puros para testes. O primeiro acesso abre um onboarding curto com dados básicos, objetivo, atividade e medidas opcionais. A aba Dieta mostra estimativas, hidratação e sugestões flexíveis de refeições ajustadas ao peso/objetivo, sem cardápio obrigatório ou prescrição. O Histórico reúne progresso do peso por etapas de até 5 kg e constância de treinos. A aba Cardio concentra o timer e as opções de modalidade; a tela inicial não duplica o timer.
 
 A navegação inferior mantém cinco posições visuais, com o botão “+” no centro; Dieta ocupa o lado esquerdo e Cardio o direito. Permanecem acessíveis Início, Exercícios e Histórico pelo conteúdo e links do app, e Cardio continua como rota própria.
 
@@ -39,4 +39,4 @@ A navegação inferior mantém cinco posições visuais, com o botão “+” no
 
 ## Limites
 
-Dados são armazenados neste aparelho, sem conta e sem sincronização. Calorias, proteína e água são referências gerais; não há dieta/cardápio, diagnóstico ou promessa de prazo. O app deve explicar limites para menores, gestantes, pessoas amamentando e condições clínicas. O histórico anterior ao cadastro continua preservado.
+Dados são armazenados neste aparelho, sem conta e sem sincronização. Calorias, proteína, água e sugestões alimentares são referências gerais; não há prescrição, diagnóstico ou promessa de prazo. O app deve explicar limites para menores, gestantes, pessoas amamentando e condições clínicas. O histórico anterior ao cadastro continua preservado.

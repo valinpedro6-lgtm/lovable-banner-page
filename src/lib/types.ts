@@ -1,7 +1,17 @@
 import type { MuscleId } from "./muscles";
 
 export type CardioActivity =
-  "Corrida" | "Bicicleta" | "Caminhada inclinada" | "Elíptico" | "Remo" | "Corda" | "Escada";
+  | "Corrida"
+  | "Bicicleta"
+  | "Caminhada"
+  | "Caminhada inclinada"
+  | "Elíptico"
+  | "Remo"
+  | "Corda"
+  | "Escada"
+  | "Natação"
+  | "Dança"
+  | "HIIT";
 
 export interface WorkoutEntry {
   id: string;

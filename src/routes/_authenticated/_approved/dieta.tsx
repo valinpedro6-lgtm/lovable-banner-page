@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Droplets, Minus, Plus, Utensils } from "lucide-react";
+import { Droplets, Lightbulb, Minus, Plus, Utensils } from "lucide-react";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { useAppState, actions } from "@/lib/store";
 import {
   goalLabel,
+  dietSuggestions,
   hydrationGoal,
   maintenanceEnergyEstimate,
   proteinEstimate,
@@ -41,6 +42,7 @@ function DietPage() {
   const waterPct = Math.min(100, Math.round((waterToday / waterGoal) * 100));
   const calories = maintenanceEnergyEstimate(profile);
   const protein = proteinEstimate(profile);
+  const suggestions = dietSuggestions(profile);
 
   return (
     <div className="space-y-5">
@@ -106,6 +108,38 @@ function DietPage() {
           orientação profissional. Calorias mostram somente gasto estimado de manutenção, por uma
           equação e fatores simplificados de atividade. O app não aplica déficit ou superávit e não
           transforma o número em meta de consumo.
+        </p>
+      </section>
+
+      <section className="panel space-y-4 p-5 animate-rise">
+        <div className="flex items-start gap-3">
+          <span className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/[0.06] text-amber-300">
+            <Lightbulb className="h-5 w-5" />
+          </span>
+          <div>
+            <SectionTitle>Sugestões para sua rotina</SectionTitle>
+            <p className="text-xs text-muted-foreground">
+              Ideias flexíveis ajustadas ao seu peso e objetivo, sem cardápio obrigatório.
+            </p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          {suggestions.map((suggestion) => (
+            <article
+              key={suggestion.title}
+              className="rounded-2xl border border-white/10 bg-black/20 p-4"
+            >
+              <h3 className="text-sm font-medium">{suggestion.title}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                {suggestion.description}
+              </p>
+              <p className="mt-2 text-xs text-foreground/80">Ex.: {suggestion.example}</p>
+            </article>
+          ))}
+        </div>
+        <p className="text-[10px] leading-relaxed text-muted-foreground">
+          As sugestões não substituem avaliação individual. Para condições de saúde, alergias,
+          gestação, amamentação ou metas específicas, procure nutricionista.
         </p>
       </section>
 

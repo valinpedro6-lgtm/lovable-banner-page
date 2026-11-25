@@ -66,8 +66,10 @@ Flexão de braço|P|triceps,deltoides,abdomen
 Flexão inclinada|P|triceps,deltoides
 Flexão declinada|P|deltoides,triceps
 Flexão com palmas (pliométrica)|P|triceps,deltoides
-Flexão archer|P|triceps
-Flexão nas argolas|O|triceps,deltoides
+	Flexão archer|P|triceps
+	Flexão pseudo-planche|P|triceps,deltoides,abdomen
+	Flexão hindu|P|triceps,deltoides
+	Flexão nas argolas|O|triceps,deltoides
 Paralelas com inclinação à frente|P|triceps,deltoides
 Pullover com halter|H|dorsais,triceps
 Svend press|A|deltoides
@@ -246,8 +248,10 @@ Dead hang (suspensão na barra)|P|dorsais
 Pronação e supinação com halter|H|
 Desvio radial com halter|H|
 Fat grip hold|O|
-Barra fixa na toalha|P|dorsais,biceps
-Extensão de dedos com elástico|E|`,
+	Barra fixa na toalha|P|dorsais,biceps
+	Barra fixa excêntrica|P|biceps
+	Barra fixa isométrica|P|biceps,antebracos
+	Extensão de dedos com elástico|E|`,
   abdomen: `
 Abdominal crunch|P|
 Abdominal infra (elevação de pernas)|P|
@@ -311,8 +315,10 @@ Avanço caminhando (walking lunge)|H|gluteos,posteriores
 Passada lateral|H|gluteos
 Step-up no banco|H|gluteos
 Agachamento sissy|P|
-Agachamento pistol|P|gluteos
-Agachamento cossaco|P|gluteos
+	Agachamento pistol|P|gluteos
+	Agachamento shrimp|P|gluteos,posteriores
+	Agachamento isométrico na parede|P|
+	Agachamento cossaco|P|gluteos
 Agachamento com salto|P|gluteos,panturrilhas
 Wall sit (cadeirinha)|P|
 Reverse nordic|P|

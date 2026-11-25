@@ -180,7 +180,7 @@ function CardioTimerHost() {
   const preset = useMemo(() => parseCardioPreset(search), [search]);
 
   useEffect(() => {
-    if (pathname !== "/" || !preset) return;
+    if (pathname !== "/cardio" || !preset) return;
     const timeout = window.setTimeout(
       () => document.getElementById("cardio-timer")?.scrollIntoView({ behavior: "smooth" }),
       100,
@@ -188,7 +188,7 @@ function CardioTimerHost() {
     return () => window.clearTimeout(timeout);
   }, [pathname, preset]);
 
-  return <CardioTimer visible={pathname === "/" || pathname === "/cardio"} preset={preset} />;
+  return <CardioTimer visible={pathname === "/cardio"} preset={preset} />;
 }
 
 function Splash() {

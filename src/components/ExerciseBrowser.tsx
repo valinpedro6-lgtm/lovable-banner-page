@@ -34,19 +34,21 @@ export function ExerciseBrowser({
 
   const list = useMemo(() => {
     const nq = normalize(q.trim());
-    return all.filter(
-      (e) =>
-        (muscle === "all" || e.muscle === muscle || e.secondary.includes(muscle)) &&
-        (equip === "all" || e.equipment === equip) &&
-        (!nq || normalize(e.name).includes(nq)),
-    ).sort((a, b) => {
-      if (muscle !== "all") {
-        const pa = a.muscle === muscle ? 0 : 1;
-        const pb = b.muscle === muscle ? 0 : 1;
-        if (pa !== pb) return pa - pb;
-      }
-      return a.name.localeCompare(b.name, "pt-BR");
-    });
+    return all
+      .filter(
+        (e) =>
+          (muscle === "all" || e.muscle === muscle || e.secondary.includes(muscle)) &&
+          (equip === "all" || e.equipment === equip) &&
+          (!nq || normalize(e.name).includes(nq)),
+      )
+      .sort((a, b) => {
+        if (muscle !== "all") {
+          const pa = a.muscle === muscle ? 0 : 1;
+          const pb = b.muscle === muscle ? 0 : 1;
+          if (pa !== pb) return pa - pb;
+        }
+        return a.name.localeCompare(b.name, "pt-BR");
+      });
   }, [all, q, muscle, equip]);
 
   return (
@@ -89,6 +91,24 @@ export function ExerciseBrowser({
           </Chip>
         ))}
       </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <span className="self-center text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+          Atalhos
+        </span>
+        <Chip small active={equip === "Peso corporal"} onClick={() => setEquip("Peso corporal")}>
+          Peso corporal
+        </Chip>
+        <Chip small active={equip === "Máquina"} onClick={() => setEquip("Máquina")}>
+          Máquinas
+        </Chip>
+        <Chip
+          small
+          active={equip === "Barra" || equip === "Halteres"}
+          onClick={() => setEquip("Barra")}
+        >
+          Academia · barra
+        </Chip>
+      </div>
       <div className="mt-3 mb-2 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
         <span className="num">{list.length}</span> resultados
       </div>
@@ -99,7 +119,8 @@ export function ExerciseBrowser({
               <div className="truncate text-sm font-medium">{e.name}</div>
               <div className="mt-0.5 truncate text-xs text-muted-foreground">
                 <span className="text-primary">{MUSCLES[e.muscle].name}</span>
-                {e.secondary.length > 0 && ` · ${e.secondary.map((s) => MUSCLES[s].short).join(", ")}`}
+                {e.secondary.length > 0 &&
+                  ` · ${e.secondary.map((s) => MUSCLES[s].short).join(", ")}`}
                 {` · ${e.equipment}`}
               </div>
             </button>
@@ -107,7 +128,9 @@ export function ExerciseBrowser({
           </li>
         ))}
         {list.length === 0 && (
-          <li className="py-10 text-center text-sm text-muted-foreground">Nenhum exercício encontrado.</li>
+          <li className="py-10 text-center text-sm text-muted-foreground">
+            Nenhum exercício encontrado.
+          </li>
         )}
       </ul>
     </div>

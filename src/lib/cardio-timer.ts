@@ -3,11 +3,15 @@ import type { CardioActivity } from "./types";
 export const CARDIO_ACTIVITY_OPTIONS: { value: CardioActivity; label: string }[] = [
   { value: "Corrida", label: "Corrida" },
   { value: "Bicicleta", label: "Bicicleta" },
+  { value: "Caminhada", label: "Caminhada" },
   { value: "Caminhada inclinada", label: "Caminhada inclinada" },
   { value: "Elíptico", label: "Elíptico" },
   { value: "Remo", label: "Remo" },
   { value: "Corda", label: "Corda" },
   { value: "Escada", label: "Escada" },
+  { value: "Natação", label: "Natação" },
+  { value: "Dança", label: "Dança" },
+  { value: "HIIT", label: "HIIT" },
 ];
 
 export interface CardioPreset {

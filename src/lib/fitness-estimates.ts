@@ -56,6 +56,71 @@ export function proteinEstimate(
   return { min, max, midpoint: Math.round(profile.weight * 1.6) };
 }
 
+export interface DietSuggestion {
+  title: string;
+  description: string;
+  example: string;
+}
+
+/** Practical meal ideas that scale portions from the person's weight without prescribing calories. */
+export function dietSuggestions(profile: Profile): DietSuggestion[] {
+  const weight = profile.weight;
+  const protein = proteinEstimate(profile);
+  const perMeal = protein ? Math.max(20, Math.round(protein.midpoint / 4)) : null;
+  const proteinText = perMeal ? `cerca de ${perMeal} g de proteína` : "uma fonte de proteína";
+  const goal = profile.goal ?? "manter";
+
+  const base: DietSuggestion[] = [
+    {
+      title: "Prato completo",
+      description: `Em uma refeição principal, combine ${proteinText}, muitos vegetais e uma porção de carboidrato que caiba na sua rotina.`,
+      example: "Frango, arroz, feijão e salada; ou tofu, batata e legumes.",
+    },
+    {
+      title: "Café da manhã ou lanche",
+      description: "Priorize proteína e fibra para ter mais saciedade e facilitar a constância.",
+      example: "Iogurte natural com aveia e fruta; ou ovos com pão integral.",
+    },
+    {
+      title: "Perto do treino",
+      description:
+        "Se treinar com fome, use uma combinação simples de carboidrato e proteína; ajuste o volume ao seu conforto.",
+      example: "Banana com iogurte; ou sanduíche de atum e uma fruta.",
+    },
+  ];
+
+  if (goal === "ganhar_massa" || goal === "ganhar_peso") {
+    base.push({
+      title: "Mais energia sem exagero",
+      description:
+        "Para ganhar massa ou peso, acrescente uma pequena porção de carboidrato ou gordura boa às refeições e acompanhe a evolução do peso.",
+      example: "Azeite na salada, pasta de amendoim, castanhas ou uma porção extra de arroz.",
+    });
+  } else if (goal === "emagrecer") {
+    base.push({
+      title: "Mais volume, mesma praticidade",
+      description:
+        "Para emagrecer, aumente vegetais e proteínas magras, mantenha alimentos que gosta e evite transformar a estimativa em uma meta rígida.",
+      example: "Sopa com carne e legumes; ou bowl com folhas, grão-de-bico e frango.",
+    });
+  } else {
+    base.push({
+      title: "Manutenção sustentável",
+      description:
+        "Para manter, distribua refeições equilibradas e observe fome, energia e evolução ao longo das semanas.",
+      example: "Arroz, feijão, carne ou leguminosa, legumes e fruta ao longo do dia.",
+    });
+  }
+
+  if (weight === null) {
+    return base;
+  }
+  return base.map((item) => ({
+    ...item,
+    description: item.description.replace("sua rotina", `seu peso de ${weight} kg e sua rotina`),
+  }));
+}
+
 export function hydrationGoal(profile: Profile): number {
   const requested = profile.waterGoalMl;
   if (typeof requested === "number" && Number.isFinite(requested)) {

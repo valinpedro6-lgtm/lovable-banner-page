@@ -1,0 +1,14 @@
+{
+  "routes": [
+    { "path": "/", "title": "Início" },
+    { "path": "/cardio", "title": "Cardio" },
+    { "path": "/dieta", "title": "Dieta" },
+    { "path": "/exercicios", "title": "Exercícios" },
+    { "path": "/historico", "title": "Histórico" },
+    { "path": "/perfil", "title": "Perfil" },
+    { "path": "/registrar", "title": "Registrar treino" },
+    { "path": "/status", "title": "Status" },
+    { "path": "/treinos", "title": "Treinos" },
+    { "path": "/musculo/:id", "title": "Músculo" }
+  ]
+}
