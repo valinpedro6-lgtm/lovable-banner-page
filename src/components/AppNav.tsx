@@ -1,16 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { BarChart3, Bike, Droplets, Home, Plus } from "lucide-react";
+import { BarChart3, Bike, Dumbbell, Home, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 type NavItemData = {
-  to: "/" | "/dieta" | "/cardio" | "/historico";
+  to: "/" | "/treinos" | "/cardio" | "/historico";
   label: string;
   icon: LucideIcon;
 };
 
 const leftItems: NavItemData[] = [
   { to: "/", label: "Início", icon: Home },
-  { to: "/dieta", label: "Dieta", icon: Droplets },
+  { to: "/treinos", label: "Treinos", icon: Dumbbell },
 ];
 
 const rightItems: NavItemData[] = [

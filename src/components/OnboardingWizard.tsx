@@ -172,7 +172,7 @@ export function OnboardingWizard() {
                   placeholder="70"
                 />
                 <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-                  Este peso será usado na aba Dieta, nas referências de proteína e no seu progresso.
+                  Este peso será usado nas referências de alimentação, proteína e no seu progresso.
                 </p>
               </Field>
               <Field label="Altura" unit="cm">
